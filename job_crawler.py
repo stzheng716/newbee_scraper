@@ -22,7 +22,7 @@ def getURL():
     driver.set_window_size(1024, 1024)
     driver.get(URL)
     global COUNT
-
+    processed_urls = set()
     try:
        element =  WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "viewContainer")))
        print(element)
@@ -33,37 +33,62 @@ def getURL():
         soup = BeautifulSoup(response, 'html.parser')
         all_spans = soup.find_all('span', class_='truncate noevents')
         if all_spans:
-            with open("hrefs.txt", "a") as file:
-                for span in all_spans:
-                    a_tag = span.find_parent('a')
-                    # print(a_tag['href'])
-                    file.write(a_tag['href']+'\n')
-                    global COUNT
-                    COUNT += 1
+            for span in all_spans:
+                a_tag = span.find_parent('a')
+                # print(a_tag['href'])
+                processed_urls.add(a_tag['href'])
+
 
         
 
     initial_response = driver.page_source
     extract_and_save(initial_response)    
     scrollable_div = driver.find_element(By.CSS_SELECTOR, ".scrollOverlay.antiscroll-wrap")
-
-    while  COUNT < 100:
+    record_number = extract_number(initial_response)
+    
+    while  len(processed_urls) < record_number:
         # Scroll down by 850px
         actions = ActionChains(driver)
         actions.move_to_element(scrollable_div).click().send_keys(Keys.PAGE_DOWN).perform()
         
         # Wait for the page to load or for more content to appear
-        time.sleep(.5)  
+        time.sleep(.5)
 
         # Get the updated page source after scroll
         response = driver.page_source
         extract_and_save(response)
 
         # Check if we're at the bottom of the page
-        print(COUNT)
+
 
     response = driver.page_source
 
+    with open('hrefs.txt','a') as file:
+        for url in processed_urls:
+            file.write(url + '\n')
+
     driver.quit()
+
+def extract_number(html_content: str) -> int:
+    """
+    Extracts the number from a specific div element in the provided HTML content.
+
+    Parameters:
+    - html_content: A string containing the HTML content.
+
+    Returns:
+    - An integer representing the extracted number (e.g., 1349).
+    """
+    soup = BeautifulSoup(html_content, 'html.parser')
+    div_element = soup.find('div', class_='selectionCount summaryCell flex-auto')
+    
+    if div_element:  # Check if the div_element was found
+        text_content = div_element.text
+        number_str = text_content.split()[0]
+        # Remove commas and convert to integer
+        number = int(number_str.replace(',', ''))
+        return number
+    
+    return None  # Return None if the div element was not found
 
 getURL()
