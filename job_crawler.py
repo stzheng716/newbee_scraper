@@ -16,10 +16,12 @@ URL = "https://airtable.com/embed/appPGrJqA2zH65k5I/shrI8dno1rMGKZM8y/tblKU0jQiy
 options = webdriver.ChromeOptions()
 options.headless = True  # Use this option if you don't want to open a browser window
 driver = webdriver.Chrome(options=options)
+COUNT=0
 
 def getURL():
     driver.set_window_size(1024, 1024)
     driver.get(URL)
+    global COUNT
 
     try:
        element =  WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "viewContainer")))
@@ -36,13 +38,16 @@ def getURL():
                     a_tag = span.find_parent('a')
                     # print(a_tag['href'])
                     file.write(a_tag['href']+'\n')
+                    global COUNT
+                    COUNT += 1
+
+        
 
     initial_response = driver.page_source
     extract_and_save(initial_response)    
     scrollable_div = driver.find_element(By.CSS_SELECTOR, ".scrollOverlay.antiscroll-wrap")
-    total_height = driver.execute_script("return document.body.scrollHeight;")
 
-    while True:
+    while  COUNT < 100:
         # Scroll down by 850px
         actions = ActionChains(driver)
         actions.move_to_element(scrollable_div).click().send_keys(Keys.PAGE_DOWN).perform()
@@ -55,11 +60,7 @@ def getURL():
         extract_and_save(response)
 
         # Check if we're at the bottom of the page
-        scroll_position = driver.execute_script("return arguments[0].scrollHeight", scrollable_div)
-
-        print("ScrollPosition ===", scroll_position, '\n', 'total Height ==', total_height)
-        if scroll_position == total_height:
-            break
+        print(COUNT)
 
     response = driver.page_source
 
