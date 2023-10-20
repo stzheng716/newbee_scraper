@@ -21,3 +21,12 @@
 		5. careers.smartrecruiters.com: 7
 3. Scrape the job descriptions
 	- run them through OpenAI
+
+
+### Create a env file:
+SK=abc123
+DATABASE_URL="postgresql:///job_crawler"
+
+### REMINDER:
+
+Please git pull and pip install when before you start working on the codebsae to ensure you have the most up-to-date packages and code. 
