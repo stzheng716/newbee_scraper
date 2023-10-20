@@ -2,6 +2,13 @@ from urllib.parse import urlparse
 from collections import Counter
 
 def count():
+    '''A frequency counter. 
+    
+    Takes in a file of URLs, each on new lines
+    Extracts the base URL, creates dict with base: count
+
+    Prints the domain and count in descending order
+    '''
     def extract_base_domain(url):
         return urlparse(url).netloc.split("www.")[-1]
 

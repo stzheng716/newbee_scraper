@@ -13,12 +13,19 @@ URL = "https://airtable.com/embed/appPGrJqA2zH65k5I/shrI8dno1rMGKZM8y/tblKU0jQiy
 options = webdriver.ChromeOptions()
 options.headless = True  # Use this option if you don't want to open a browser window
 driver = webdriver.Chrome(options=options)
-COUNT=0
 
 def getURL():
+    '''Tier 1: The First Scrape
+    Extracts URLs from the defined global URL variable.
+    
+    Parameters:
+    - N/A
+
+    Returns:
+    - hrefs.txt file: URLS to job boards, each on a new line.
+    '''
     driver.set_window_size(1024, 1024)
     driver.get(URL)
-    global COUNT
     processed_urls = set()
     try:
         element =  WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "viewContainer")))
@@ -27,6 +34,14 @@ def getURL():
         print("Page title couldn't be found")
 
     def extract_and_save(response):
+        '''Extracts and saves URLs from a selenium scrape
+
+        Parameters:
+        - selenium page source
+
+        Returns:
+        - Adds href to the "processed_urls" set.
+        '''
         soup = BeautifulSoup(response, 'html.parser')
         all_spans = soup.find_all('span', class_='truncate noevents')
         if all_spans:
@@ -35,12 +50,12 @@ def getURL():
                 # print(a_tag['href'])
                 processed_urls.add(a_tag['href'])
 
-
     initial_response = driver.page_source
     extract_and_save(initial_response)
     scrollable_div = driver.find_element(By.CSS_SELECTOR, ".scrollOverlay.antiscroll-wrap")
-    record_number = extract_number(initial_response)
 
+    # Variables used for breaking out of the while loop
+    record_number = extract_number(initial_response)
     previous_set_size = 0
     no_change_counter = 0
     max_no_change = 3  # Adjust based on your preference
@@ -51,7 +66,7 @@ def getURL():
         actions.move_to_element(scrollable_div).click().send_keys(Keys.PAGE_DOWN).perform()
 
         # Wait for the page to load or for more content to appear
-        time.sleep(.5)
+        time.sleep(2)
 
         # Get the updated page source after scroll
         response = driver.page_source
