@@ -2,8 +2,8 @@ from urllib.parse import urlparse
 from collections import Counter
 
 def count():
-    '''A frequency counter. 
-    
+    '''A frequency counter.
+
     Takes in a file of URLs, each on new lines
     Extracts the base URL, creates dict with base: count
 
@@ -16,7 +16,9 @@ def count():
     with open('hrefs.txt', 'r') as file:
         urls = [line.strip() for line in file]
 
-    base_domains = [extract_base_domain(url) for url in urls]
+    print(urls[0])
+
+    base_domains = [extract_base_domain(url.split('~')[1]) for url in urls]
 
     frequency_counter = Counter(base_domains)
 
