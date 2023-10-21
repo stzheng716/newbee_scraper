@@ -28,16 +28,25 @@ def extract_and_save(response, url_set):
 
     Parameters:
     - selenium page source
+    - set to hold processed company names and job link urls
+        -set will be set of tuples (company_name: str, job_url: str)
 
     Returns:
-    - Adds href to the "PROCESSED_URLS" set.
+    - the filled set, to be procssed by the calling parent
     '''
     soup = BeautifulSoup(response, 'html.parser')
-    all_spans = soup.find_all('span', class_='truncate noevents')
-    if all_spans:
-        for span in all_spans:
-            a_tag = span.find_parent('a')
-            # print(a_tag['href'])
-            url_set.add(a_tag['href'])
+
+    #access all of the dataRows from "dataLeftPaneInnerContent paneInnerContent"
+    all_rows = soup.find_all(attrs={"data-testid":"data-row"})
+
+    if all_rows:
+        for row in all_rows:
+            company_name = row.find(attrs={"data-columnindex":"0"}).get_text()
+            jobs_link = row.find(attrs={"data-columnindex":"2"}).a.get('href')
+
+            company_info = (company_name, jobs_link)
+
+            url_set.add(company_info)
         return url_set
+
 
