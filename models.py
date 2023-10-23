@@ -4,6 +4,7 @@ from datetime import datetime
 
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy_utils import URLType
+from sqlalchemy import text
 
 
 db = SQLAlchemy()
@@ -19,8 +20,10 @@ class JobBoards(db.Model):
     )
 
     company_name = db.Column(
-        db.String(50),
-        nullable=False
+        db.String(250),
+        nullable=False,
+        unique=True,
+        server_default=text("'requires research'")
     )
 
     careers_url = db.Column(
@@ -31,8 +34,10 @@ class JobBoards(db.Model):
     career_date_scraped = db.Column(
         db.DateTime,
         nullable=False,
-        default=datetime.utcnow
+        server_default=db.func.now()
     )
+
+
 
 class JobPostings(db.Model):
     """Job postings from job boards"""
