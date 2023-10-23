@@ -14,19 +14,19 @@
 	- Get company "career" URLs
 2. Scrape those job URLs (company websites) for jobs in our field
 	-  top 5 job boards
-		1. jobs.lever.co: 191
-		2. boards.greenhouse.io: 113
-		3. jobs.ashbyhq.com: 37
-		4. jobs.jobvite.com: 8
-		5. careers.smartrecruiters.com: 7
+		1. jobs.lever.co: 191->164 on 10/23
+		2. boards.greenhouse.io: 113->97 on 10/23
+		3. jobs.ashbyhq.com: 37->33 on 10/23
+		4. jobs.jobvite.com: 8->8 on 10/23
+		5. careers.smartrecruiters.com: 7->5 on 10/23
 3. Scrape the job descriptions
 	- run them through OpenAI
 
 
 ### Create a env file:
-SK=abc123
-DATABASE_URL="postgresql:///job_crawler"
-DATABASE_NAME="job_crawler"
+SK=abc123<br>
+DATABASE_URL="postgresql:///job_crawler"<br>
+DATABASE_NAME="job_crawler"<br>
 
 ### REMINDER:
 
