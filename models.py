@@ -22,6 +22,7 @@ class JobBoards(db.Model):
     company_name = db.Column(
         db.String(250),
         nullable=False,
+        unique=True,
         server_default=text("'requires research'")
     )
 
