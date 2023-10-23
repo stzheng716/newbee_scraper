@@ -74,9 +74,10 @@ def getURL():
 
     response = driver.page_source
 
-    with open('hrefs.txt','a') as file:
+    with open('hrefs.csv','w') as file:
         for url in PROCESSED_URLS:
-            file.write(url[0] + "~" + url[1] + '\n')
+            file.write(url[0] + "," + url[1] + '\n')
+
 
     driver.quit()
 
