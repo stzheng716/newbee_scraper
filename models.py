@@ -31,6 +31,11 @@ class JobBoards(db.Model):
         nullable=False
     )
 
+    ats_url = db.Column(
+        db.String(50),
+        nullable=False,
+    )
+
     career_date_scraped = db.Column(
         db.DateTime,
         nullable=False,
