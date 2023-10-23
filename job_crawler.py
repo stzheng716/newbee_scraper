@@ -1,6 +1,5 @@
 import time
 from selenium import webdriver
-from bs4 import BeautifulSoup
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
@@ -74,9 +73,10 @@ def getURL():
 
     response = driver.page_source
 
-    with open('hrefs.txt','a') as file:
+    with open('hrefs.csv','w') as file:
         for url in PROCESSED_URLS:
-            file.write(url[0] + "~" + url[1] + '\n')
+            file.write(f'"{url[0]}","{url[1]}"\n')
+
 
     driver.quit()
 
