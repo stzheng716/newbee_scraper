@@ -1,6 +1,5 @@
 import time
 from selenium import webdriver
-from bs4 import BeautifulSoup
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
@@ -19,7 +18,7 @@ PROCESSED_URLS = set()
 def getURL():
     '''Tier 1: The First Scrape
     Extracts URLs from the defined global URL variable.
-    
+
     Parameters:
     - N/A
 
@@ -35,7 +34,8 @@ def getURL():
         print("Page title couldn't be found")
 
     initial_response = driver.page_source
-    global PROCESSED_URLS 
+    print("INITIAL RESPONSE", type(initial_response))
+    global PROCESSED_URLS
     extract_and_save(initial_response, PROCESSED_URLS)
     scrollable_div = driver.find_element(By.CSS_SELECTOR, ".scrollOverlay.antiscroll-wrap")
 
@@ -45,7 +45,7 @@ def getURL():
     no_change_counter = 0
     max_no_change = 3  # Adjust based on your preference
 
-    while  len(PROCESSED_URLS) < record_number:
+    while len(PROCESSED_URLS) < record_number:
         # Scroll down by 850px
         actions = ActionChains(driver)
         actions.move_to_element(scrollable_div).click().send_keys(Keys.PAGE_DOWN).perform()
@@ -73,9 +73,10 @@ def getURL():
 
     response = driver.page_source
 
-    with open('hrefs.txt','a') as file:
+    with open('hrefs.csv','w') as file:
         for url in PROCESSED_URLS:
-            file.write(url + '\n')
+            file.write(f'"{url[0]}","{url[1]}"\n')
+
 
     driver.quit()
 
