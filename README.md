@@ -24,9 +24,28 @@
 
 
 ### Create a env file:
-SK=abc123
-DATABASE_URL="postgresql:///job_crawler"
-DATABASE_NAME="job_crawler"
+SK=abc123<br>
+DATABASE_URL="postgresql:///job_crawler"<br>
+DATABASE_NAME="job_crawler"<br>
+
+### Running Locally
+- navigate into your project folder
+- activate your venv
+
+- to get the latest version of the database
+	```
+	flask shell
+	db.drop_all()
+	db.create_all()
+	ctrl+d to exist the flask shell
+	```
+
+	back on the command line
+	```
+	python3 bulk_insert
+	```
+	this command will copy the contents of hrefs.csv into your local database
+-
 
 ### REMINDER:
 
