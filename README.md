@@ -1,5 +1,15 @@
 # test_job_scraper
 
+### Database Migration procedure
+1.) navigate to the project root<br>
+2.) activate your venv<br>
+3.) in the terminal, run the `flask shell` command to open the flask shell<br>
+4.) drop the current tables `db.drop_all()`<br>
+5.) create the new version of the database `db.create_all()`<br>
+6.) exit the flask shell with ctrl+d (mac)<br>
+7.) in the regular terminal, run the following `python3 bulk_insert.py`<br>
+
+
 ### Project Overview:
 - Who's it for?
 	- Bootcamp grads
@@ -28,24 +38,6 @@ SK=abc123<br>
 DATABASE_URL="postgresql:///job_crawler"<br>
 DATABASE_NAME="job_crawler"<br>
 
-### Running Locally
-- navigate into your project folder
-- activate your venv
-
-- to get the latest version of the database
-	```
-	flask shell
-	db.drop_all()
-	db.create_all()
-	ctrl+d to exist the flask shell
-	```
-
-	back on the command line
-	```
-	python3 bulk_insert
-	```
-	this command will copy the contents of hrefs.csv into your local database
--
 
 ### REMINDER:
 
