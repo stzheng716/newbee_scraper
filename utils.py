@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 
 """ Utility functions for extracting data from the Tier 1 MEGASCRAPE """
 
+KEYWORDS = ["developer", "software engineer", "engineer", "software"]
 
 def extract_number(html_content: str) -> int:
     """
