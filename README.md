@@ -1,7 +1,7 @@
 # test_job_scraper
 
 ### Running the project locally
-1.) clone the repo
+1.) clone the repo<br>
 2.) navigate to the project root<br>
 3.) activate your venv<br>
 4.) create your .env file
