@@ -3,25 +3,25 @@ from bs4 import BeautifulSoup
 import re
 from utils import KEYWORDS
 
-"""
-Scraper for jobs on jobs.lever.io
+"""Scraper for jobs on jobs.lever.io
 
 In:
     URL
-    Keywords [developer, engineer, software]
 
 Out:
-    Job Title(?)
-    Job ID 
-    Job URL 
+    returns a list of objects:
+        [{job_data}, ...]
+        
+        job_data = {"job_title": job_title,
+                    "id": job_id,
+                    "job_url": job_url,
+                    "JSON_response": {
+                        "location": location,
+                        "department": department
+                        }
+                    }
 
-BS4 will do the main scrape and we can put all of the divs containing the pertinent job data into a list. 
-All jobs on jobs.lever.io are in a div w/ class="posting"
-
-Roadblocks:
-    - job and department titles are inconsistent. We run the risk of missing jobs outside of our keywords ie: "site reliability"
-    - 
-"""
+Pulls out pertinent jobs that meet KEYWORD criteria"""
 
 def scrape_lever_job_board(url):
     response = requests.get(url)
@@ -29,7 +29,7 @@ def scrape_lever_job_board(url):
     soup = BeautifulSoup(response.content, 'html.parser')
     potential_jobs = []
 
-    # Lever usually has job listings within <div> elements with a class of "posting"
+    # Loop over div containing job data
     for job_div in soup.find_all('div', class_='posting'):
         job_title = job_div.find('h5').get_text()
         location = job_div.find('span', class_='sort-by-location').get_text()
@@ -38,7 +38,7 @@ def scrape_lever_job_board(url):
         job_url = soup.find('a', class_='posting-btn-submit')['href']
 
 
-        # Check if the title indicates a software engineering or related role
+        # Check if the title meets KEYWORD criteria
         for keyword in KEYWORDS:
             if re.search(r'\b%s\b' % (keyword), job_title, re.I):
                 job_data = {"job_title": job_title,
@@ -51,9 +51,4 @@ def scrape_lever_job_board(url):
                             }
                 potential_jobs.append(job_data)
 
-    print (potential_jobs)
-
-# # Iterate over your Lever URLs
-# for url in lever_urls_from_db:
-#     scrape_lever_job_board(url)
-    
+    return potential_jobs
