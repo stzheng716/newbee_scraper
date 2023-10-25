@@ -4,7 +4,7 @@ import re
 from utils import KEYWORDS
 
 """
-Scraper for jobs on jobs.lever.io
+Scraper for jobs on boards.greenhouse.io
 
 In:
     URL
@@ -16,28 +16,29 @@ Out:
     Job URL 
 
 BS4 will do the main scrape and we can put all of the divs containing the pertinent job data into a list. 
-All jobs on jobs.lever.io are in a div w/ class="posting"
+All jobs on jobs.greenhouse.io are in a div w/ class="posting"
 
 Roadblocks:
     - job and department titles are inconsistent. We run the risk of missing jobs outside of our keywords ie: "site reliability"
     - 
 """
 
-def scrape_lever_job_board(url):
+BASE_URL = "https://boards.greenhouse.io"
+
+def scrape_greenhouse_job_board(url):
     response = requests.get(url)
     response.raise_for_status()  # Check if the request was successful
     soup = BeautifulSoup(response.content, 'html.parser')
     potential_jobs = []
 
-    # Lever usually has job listings within <div> elements with a class of "posting"
-    for job_div in soup.find_all('div', class_='posting'):
-        job_title = job_div.find('h5').get_text()
-        location = job_div.find('span', class_='sort-by-location').get_text()
-        department = job_div.find('span', class_='sort-by-team').get_text()
-        job_id = soup.find('div', class_='posting')['data-qa-posting-id']
-        job_url = soup.find('a', class_='posting-btn-submit')['href']
+    # greenhouse usually has job listings within <div> elements with a class of "posting"
+    for job_div in soup.find_all('div', class_='opening'):
+        job_title = job_div.find('a').get_text()
+        location = job_div.find('span', class_='location').get_text()
+        job_url = BASE_URL + job_div.find('a')['href']
+        job_id = job_url.split("/")[-1]
 
-
+    
         # Check if the title indicates a software engineering or related role
         for keyword in KEYWORDS:
             if re.search(r'\b%s\b' % (keyword), job_title, re.I):
@@ -46,14 +47,14 @@ def scrape_lever_job_board(url):
                             "job_url": job_url,
                             "JSON_response": {
                                 "location": location,
-                                "department": department
                                 }
                             }
                 potential_jobs.append(job_data)
+                break
 
     print (potential_jobs)
 
-# # Iterate over your Lever URLs
-# for url in lever_urls_from_db:
-#     scrape_lever_job_board(url)
+# # Iterate over your greenhouse URLs
+# for url in greenhouse_urls_from_db:
+#     scrape_greenhouse_job_board(url)
     
