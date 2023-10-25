@@ -1,13 +1,22 @@
 # test_job_scraper
 
-### Database Migration procedure
-1.) navigate to the project root<br>
-2.) activate your venv<br>
-3.) in the terminal, run the `flask shell` command to open the flask shell<br>
-4.) drop the current tables `db.drop_all()`<br>
-5.) create the new version of the database `db.create_all()`<br>
-6.) exit the flask shell with ctrl+d (mac)<br>
-7.) in the regular terminal, run the following `python3 bulk_insert.py`<br>
+### Running the project locally
+1.) clone the repo
+2.) navigate to the project root<br>
+3.) activate your venv<br>
+4.) create your .env file
+```
+SK=abc123<br>
+DATABASE_URL="postgresql:///job_crawler"
+DATABASE_NAME="job_crawler"
+```
+5.) run the following commands in the terminal to create your local copy of the database
+```
+psql
+CREATE DATABASE job_crawler
+ctrl+d to qui
+```
+6.) in the terminal, run the `python3 migrate.py` this will drop all of the tables, create the latest version of the tables, and add the contents of the hrefs.csv file to your local database
 
 
 ### Project Overview:
@@ -34,9 +43,7 @@
 
 
 ### Create a env file:
-SK=abc123<br>
-DATABASE_URL="postgresql:///job_crawler"<br>
-DATABASE_NAME="job_crawler"<br>
+
 
 
 ### REMINDER:
