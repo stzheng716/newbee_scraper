@@ -9,7 +9,7 @@ KEYWORDS = ["developer", "software engineer",
 # ATS_KEYWORDS = ["ashby", "greenhouse", "lever"]
 
 ## FOR TESTING
-ATS_KEYWORDS = ["greenhouse"]
+ATS_KEYWORDS = ["lever"]
 
 
 def extract_number(html_content: str) -> int:
