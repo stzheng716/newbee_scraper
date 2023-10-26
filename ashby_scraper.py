@@ -52,7 +52,6 @@ def scrape_ashby_job_board(url):
         location = job_div.find('p').get_text().split("•")[1].strip()
         job_url = BASE_URL + job_div.parent['href']
         job_id = job_url.split("/")[-1]
-        print("JOB TITLE ===> ", job_title)
 
         # Check if the title indicates a software engineering or related role
         for keyword in KEYWORDS:
@@ -67,9 +66,4 @@ def scrape_ashby_job_board(url):
                 potential_jobs.append(job_data)
                 break
     print (potential_jobs)
-
-# # Iterate over your ashby URLs
-# for url in ashby_urls_from_db:
-#     scrape_ashby_job_board(url)
-
 
