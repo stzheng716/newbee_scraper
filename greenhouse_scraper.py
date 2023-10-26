@@ -37,7 +37,6 @@ def scrape_greenhouse_job_board(url):
         location = job_div.find('span', class_='location').get_text()
         job_url = BASE_URL + job_div.find('a')['href']
         job_id = job_url.split("/")[-1]
-
     
         # Check if the title indicates a software engineering or related role
         for keyword in KEYWORDS:
@@ -51,7 +50,6 @@ def scrape_greenhouse_job_board(url):
                             }
                 potential_jobs.append(job_data)
                 break
-
     print (potential_jobs)
 
 # # Iterate over your greenhouse URLs
