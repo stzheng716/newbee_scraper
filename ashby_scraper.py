@@ -31,13 +31,13 @@ Roadblocks:
 BASE_URL = "https://jobs.ashbyhq.com"
 
 options = webdriver.ChromeOptions()
-options.headless = True  # Use this option if you don't want to open a browser window
+options.add_argument("--headless=new")
 driver = webdriver.Chrome(options=options)
 
 def scrape_ashby_job_board(url):
     driver.get(url)
     try:
-        element =  WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.CLASS_NAME, "_container_sdzkb_29 _section_1qwfy_341")))
+        element =  WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.CLASS_NAME, "ashby-job-posting-brief")))
         print(element)
     except TimeoutException:
         print("Page title couldn't be found")
@@ -47,11 +47,12 @@ def scrape_ashby_job_board(url):
     potential_jobs = []
 
     # ashby usually has job listings within <div> elements with a class of "posting"
-    for job_div in soup.find_all('div', class_='ashby-job-posting-brief-list'):
+    for job_div in soup.find_all('div', class_='ashby-job-posting-brief'):
         job_title = job_div.find('h3').get_text()
         location = job_div.find('p').get_text().split("•")[1].strip()
-        job_url = BASE_URL + job_div.find('a')['href']
+        job_url = BASE_URL + job_div.parent['href']
         job_id = job_url.split("/")[-1]
+        print("JOB TITLE ===> ", job_title)
 
         # Check if the title indicates a software engineering or related role
         for keyword in KEYWORDS:
@@ -70,4 +71,5 @@ def scrape_ashby_job_board(url):
 # # Iterate over your ashby URLs
 # for url in ashby_urls_from_db:
 #     scrape_ashby_job_board(url)
+
 
