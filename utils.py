@@ -1,8 +1,11 @@
 from bs4 import BeautifulSoup
+from app import app
+from models import JobBoards
 
 """ Utility functions for extracting data from the Tier 1 MEGASCRAPE """
 
 KEYWORDS = ["developer", "software engineer", "engineer", "software"]
+ATS_KEYWORDS = ["ashby", "greenhouse", "lever"]
 
 def extract_number(html_content: str) -> int:
     """
@@ -59,3 +62,24 @@ def extract_and_save(response, url_set):
 
             url_set.add(company_info)
         return url_set
+
+
+
+def sql_url_query():
+
+    """
+    functions that returns a dictionary with list of all of the specific ats platforms
+
+    return {"lever": [{id, company_name, careers_url, ats_url, career_date_scraped} ,{}]
+        ,"greenhouse": [{}{}],
+        "ashby":[{},{}]} 
+    """
+
+    ats_dict = {}
+
+    with app.app_context():
+        for ats in ATS_KEYWORDS:
+            company_boards = JobBoards.query.filter(JobBoards.careers_url.like(f"%{ats}%")).all()
+            ats_dict[ats] = company_boards
+
+    return ats_dict
