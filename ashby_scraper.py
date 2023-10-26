@@ -31,7 +31,7 @@ Roadblocks:
 BASE_URL = "https://jobs.ashbyhq.com"
 
 options = webdriver.ChromeOptions()
-options.headless = True  # Use this option if you don't want to open a browser window
+options.add_argument("--headless=new")
 driver = webdriver.Chrome(options=options)
 
 def scrape_ashby_job_board(url):
@@ -55,6 +55,7 @@ def scrape_ashby_job_board(url):
 
         # Check if the title indicates a software engineering or related role
         for keyword in KEYWORDS:
+            breakpoint()
             if re.search(r'\b%s\b' % (keyword), job_title, re.I):
                 job_data = {"job_title": job_title,
                             "id": job_id,
