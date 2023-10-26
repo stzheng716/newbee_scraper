@@ -11,7 +11,7 @@ from utils import extract_number, extract_and_save
 # Set up Selenium
 URL = "https://airtable.com/embed/appPGrJqA2zH65k5I/shrI8dno1rMGKZM8y/tblKU0jQiyIX182uU?backgroundColor=cyan&viewControls=on"
 options = webdriver.ChromeOptions()
-options.headless = True  # Use this option if you don't want to open a browser window
+options.add_argument("--headless=new")
 driver = webdriver.Chrome(options=options)
 PROCESSED_URLS = set()
 
