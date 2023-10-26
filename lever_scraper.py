@@ -33,9 +33,12 @@ def scrape_lever_job_board(url):
     for job_div in soup.find_all('div', class_='posting'):
         job_title = job_div.find('h5').get_text()
         location = job_div.find('span', class_='sort-by-location').get_text()
-        department = job_div.find('span', class_='sort-by-team').get_text()
+        department_div = job_div.find('span', class_='sort-by-team')
+        department = job_div.find('span', class_='sort-by-team').get_text() if department_div else None
         job_id = job_div['data-qa-posting-id']
         job_url = job_div.find('a', class_='posting-btn-submit')['href']
+        print("job URL =>>>>", job_url)
+        print("job title =>>>>", job_title)
 
 
         # Check if the title indicates a software engineering or related role
@@ -52,7 +55,8 @@ def scrape_lever_job_board(url):
                 potential_jobs.append(job_data)
                 break
             
-    print (potential_jobs)
+    print(len(potential_jobs))
+    print(potential_jobs)
 
 # # Iterate over your Lever URLs
 # for url in lever_urls_from_db:
