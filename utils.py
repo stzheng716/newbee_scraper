@@ -4,9 +4,13 @@ from models import JobBoards
 
 """ Utility functions for extracting data from the Tier 1 MEGASCRAPE """
 
-KEYWORDS = ["developer", "software engineer", "engineer", "software"]
-ATS_KEYWORDS = ["ashby"] 
+KEYWORDS = ["developer", "software engineer",
+            "engineer", "software", "engineering"]
 # ATS_KEYWORDS = ["ashby", "greenhouse", "lever"]
+
+## FOR TESTING
+ATS_KEYWORDS = ["greenhouse"]
+
 
 def extract_number(html_content: str) -> int:
     """
@@ -19,7 +23,8 @@ def extract_number(html_content: str) -> int:
     - An integer representing the extracted number (e.g., 1349).
     """
     soup = BeautifulSoup(html_content, "html.parser")
-    div_element = soup.find("div", class_="selectionCount summaryCell flex-auto")
+    div_element = soup.find(
+        "div", class_="selectionCount summaryCell flex-auto")
 
     if div_element:  # Check if the div_element was found
         text_content = div_element.text
@@ -65,9 +70,7 @@ def extract_and_save(response, url_set):
         return url_set
 
 
-
 def sql_url_query():
-
     """
     functions that returns a dictionary with list of all of the specific ats platforms
 
@@ -80,7 +83,8 @@ def sql_url_query():
 
     with app.app_context():
         for ats in ATS_KEYWORDS:
-            company_boards = JobBoards.query.filter(JobBoards.careers_url.like(f"%{ats}%")).all()
+            company_boards = JobBoards.query.filter(
+                JobBoards.careers_url.like(f"%{ats}%")).all()
             ats_dict[ats] = company_boards
 
     return ats_dict
