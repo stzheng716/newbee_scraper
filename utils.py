@@ -5,7 +5,8 @@ from models import JobBoards
 """ Utility functions for extracting data from the Tier 1 MEGASCRAPE """
 
 KEYWORDS = ["developer", "software engineer", "engineer", "software"]
-ATS_KEYWORDS = ["ashby", "greenhouse", "lever"]
+ATS_KEYWORDS = ["ashby"] 
+# ATS_KEYWORDS = ["ashby", "greenhouse", "lever"]
 
 def extract_number(html_content: str) -> int:
     """
