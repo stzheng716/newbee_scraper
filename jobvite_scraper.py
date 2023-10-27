@@ -2,7 +2,7 @@ from curses.ascii import isdigit
 import requests
 from bs4 import BeautifulSoup
 import re
-from utils import KEYWORDS
+from utils import KEYWORDS, insert_jobs
 
 BASE_URL = "https://jobs.jobvite.com"
 
@@ -14,18 +14,18 @@ In:
 
 Out:
     Job Title(?)
-    Job ID 
-    Job URL 
-    location >> 
+    Job ID
+    Job URL
+    location >>
     department
 
-BS4 will do the main scrape and we can put all of the divs containing the pertinent job data into a list. 
+BS4 will do the main scrape and we can put all of the divs containing the pertinent job data into a list.
 All jobs on jobs.jobvite.com are in a div w/ class="posting"
 
 Roadblocks:
     - https://jobs.jobvite.com/upland-software >>> Redirects to upland's website
     - The html layout is significantly different across various jobvite sites.
-        - Some are tables, some are lists, some are divs 
+        - Some are tables, some are lists, some are divs
         - https://uplandsoftware.com/careers/#career-openings
             - tables, anchors
         - https://jobs.jobvite.com/insurity/jobs/positions
@@ -36,7 +36,7 @@ Roadblocks:
 
 """
 
-def scrape_jobvite_job_board(url):
+def scrape_jobvite_job_board(url, company_name):
     response = requests.get(url)
     response.raise_for_status()  # Check if the request was successful
     soup = BeautifulSoup(response.content, 'html.parser')
@@ -47,7 +47,7 @@ def scrape_jobvite_job_board(url):
         job_title = job_element.find('a').get_text()
         department = job_element.parent.parent.find_previous_sibling('h3').get_text()
         job_id = job_element.find('a')['href'].split('/')[-1]
-        
+
         location = job_element.find('div', class_='jv-job-list-location').get_text().strip().split(',')[0]
         if isdigit(location[0]):
             location = None
@@ -57,16 +57,17 @@ def scrape_jobvite_job_board(url):
         for keyword in KEYWORDS:
             if re.search(r'\b%s\b' % (keyword), job_title, re.I):
                 job_data = {"job_title": job_title,
-                            "id": job_id,
+                            "company_name":company_name,
+                            "job_id": job_id,
                             "job_url": job_url,
-                            "JSON_response": {
+                            "json_response": {
                                 "location": location,
                                 "department": department
                                 }
                             }
                 potential_jobs.append(job_data)
                 break
+    insert_jobs(potential_jobs)
 
-    print (potential_jobs)
 
 
