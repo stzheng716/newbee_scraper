@@ -63,19 +63,25 @@ class JobPostings(db.Model):
         nullable=False
     )
 
+    job_id = db.Column(
+        db.String(),
+        index=True,
+        nullable=False,
+        unique=True,    )
+
     job_scraped_date = db.Column(
         db.DateTime,
         nullable=False,
-        default=datetime.utcnow
+        server_default=db.func.now()
     )
 
-    company = db.Column(
-        db.Integer,
-        db.ForeignKey('job_boards.id', ondelete='CASCADE'),
+    company_name = db.Column(
+        db.String(),
+        db.ForeignKey('job_boards.company_name', ondelete='CASCADE'),
         nullable=False
     )
 
-    JSON_response = db.Column(
+    json_response = db.Column(
         db.JSON
     )
 

@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 import re
-from utils import KEYWORDS
+from utils import KEYWORDS, insert_jobs
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -34,7 +34,7 @@ options = webdriver.ChromeOptions()
 options.add_argument("--headless=new")
 driver = webdriver.Chrome(options=options)
 
-def scrape_ashby_job_board(url):
+def scrape_ashby_job_board(url, company_name):
     driver.get(url)
     try:
         element =  WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.CLASS_NAME, "ashby-job-posting-brief")))
@@ -55,16 +55,16 @@ def scrape_ashby_job_board(url):
 
         # Check if the title indicates a software engineering or related role
         for keyword in KEYWORDS:
-            breakpoint()
             if re.search(r'\b%s\b' % (keyword), job_title, re.I):
                 job_data = {"job_title": job_title,
-                            "id": job_id,
+                            "company_name":company_name,
+                            "job_id": job_id,
                             "job_url": job_url,
-                            "JSON_response": {
+                            "json_response": {
                                 "location": location,
                                 }
                             }
                 potential_jobs.append(job_data)
                 break
-    print (potential_jobs)
+    insert_jobs(potential_jobs)
 
