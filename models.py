@@ -63,6 +63,12 @@ class JobPostings(db.Model):
         nullable=False
     )
 
+    job_id = db.Column(
+        db.String(),
+        index=True,
+        nullable=False
+    )
+
     job_scraped_date = db.Column(
         db.DateTime,
         nullable=False,
