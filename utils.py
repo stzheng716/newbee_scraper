@@ -6,10 +6,10 @@ from models import JobBoards
 
 KEYWORDS = ["developer", "software engineer",
             "engineer", "software", "engineering"]
-# ATS_KEYWORDS = ["ashby", "greenhouse", "lever"]
+ATS_KEYWORDS = ["ashby", "greenhouse", "lever"]
 
 ## FOR TESTING
-ATS_KEYWORDS = ["lever"]
+# ATS_KEYWORDS = ["lever"]
 
 
 def extract_number(html_content: str) -> int:
@@ -76,7 +76,7 @@ def sql_url_query():
 
     return {"lever": [{id, company_name, careers_url, ats_url, career_date_scraped} ,{}]
         ,"greenhouse": [{}{}],
-        "ashby":[{},{}]} 
+        "ashby":[{},{}]}
     """
 
     ats_dict = {}
