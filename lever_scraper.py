@@ -1,7 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
 import re
-from utils import KEYWORDS
+from utils import KEYWORDS, insert_jobs
+
 
 """
 Scraper for jobs on jobs.lever.io
@@ -12,18 +13,18 @@ In:
 
 Out:
     Job Title(?)
-    Job ID 
-    Job URL 
+    Job ID
+    Job URL
 
-BS4 will do the main scrape and we can put all of the divs containing the pertinent job data into a list. 
+BS4 will do the main scrape and we can put all of the divs containing the pertinent job data into a list.
 All jobs on jobs.lever.io are in a div w/ class="posting"
 
 Roadblocks:
     - job and department titles are inconsistent. We run the risk of missing jobs outside of our keywords ie: "site reliability"
-    - 
+    -
 """
 
-def scrape_lever_job_board(url):
+def scrape_lever_job_board(url, company_name):
     response = requests.get(url)
     response.raise_for_status()  # Check if the request was successful
     soup = BeautifulSoup(response.content, 'html.parser')
@@ -45,20 +46,18 @@ def scrape_lever_job_board(url):
         for keyword in KEYWORDS:
             if re.search(r'\b%s\b' % (keyword), job_title, re.I):
                 job_data = {"job_title": job_title,
-                            "id": job_id,
+                            "company_name":company_name,
+                            "job_id": job_id,
                             "job_url": job_url,
-                            "JSON_response": {
+                            "json_response": {
                                 "location": location,
                                 "department": department
                                 }
                             }
                 potential_jobs.append(job_data)
                 break
-            
-    print(len(potential_jobs))
-    print(potential_jobs)
 
-# # Iterate over your Lever URLs
-# for url in lever_urls_from_db:
-#     scrape_lever_job_board(url)
-    
+    # print(len(potential_jobs))
+    # print(potential_jobs)
+    insert_jobs(potential_jobs)
+

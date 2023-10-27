@@ -1,6 +1,18 @@
 from bs4 import BeautifulSoup
 from app import app
 from models import JobBoards
+import json
+
+import psycopg2
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+#connect to the database directly for the insert
+conn = psycopg2.connect(database=os.environ["DATABASE_NAME"])
+conn.autocommit = True
+cursor = conn.cursor()
 
 """ Utility functions for extracting data from the Tier 1 MEGASCRAPE """
 
@@ -33,7 +45,7 @@ def extract_number(html_content: str) -> int:
         number = int(number_str.replace(",", ""))
         return number
 
-    return None  # Return None if the div element was not found
+    return 2000  # Return 2000 if the div element was not found
 
 
 def extract_and_save(response, url_set):
@@ -88,3 +100,21 @@ def sql_url_query():
             ats_dict[ats] = company_boards
 
     return ats_dict
+
+def insert_jobs(jobs):
+    """take list of dictionaries and insert into the main postgres database"""
+
+    for row in jobs:
+        job_title = row["job_title"]
+        company_name = row["company_name"]
+        job_id = row["job_id"]
+        job_url = row["job_url"]
+        json_response = row["json_response"]
+        # breakpoint()
+        insert_query = f"""
+            INSERT INTO job_postings (job_title, company_name, job_id, job_url, json_response)
+            VALUES (%s, %s, %s, %s, %s)
+            ON CONFLICT (job_id) DO NOTHING;
+            """
+        cursor.execute(insert_query, (job_title, company_name, job_id, job_url, json.dumps(json_response)))
+
