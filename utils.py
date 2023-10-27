@@ -45,7 +45,7 @@ def extract_number(html_content: str) -> int:
         number = int(number_str.replace(",", ""))
         return number
 
-    return None  # Return None if the div element was not found
+    return 2000  # Return 2000 if the div element was not found
 
 
 def extract_and_save(response, url_set):
