@@ -46,7 +46,7 @@ def getURL():
     no_change_counter = 0
     max_no_change = 3  # Adjust based on your preference
 
-    while len(PROCESSED_URLS) < 25:
+    while len(PROCESSED_URLS) < record_number:
         # Scroll down by 850px
         actions = ActionChains(driver)
         actions.move_to_element(scrollable_div).click().send_keys(Keys.PAGE_DOWN).perform()
@@ -77,15 +77,6 @@ def getURL():
     for url in PROCESSED_URLS:
         print(url)
         insert_company(url)
-##this is where things will change
-    # with open('hrefs.csv','w') as file:
-    #     for url in PROCESSED_URLS:
-
-    #         #iterate over each line in the processed URL
-    #         #write the line to the sqlite database
-
-    #         file.write(f'"{url[0]}","{url[1]}"\n')
-
 
     driver.quit()
 
