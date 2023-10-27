@@ -18,10 +18,10 @@ cursor = conn.cursor()
 
 KEYWORDS = ["developer", "software engineer",
             "engineer", "software", "engineering"]
-# ATS_KEYWORDS = ["ashby", "greenhouse", "lever"]
+ATS_KEYWORDS = ["ashby", "greenhouse", "lever"]
 
 ## FOR TESTING
-ATS_KEYWORDS = ["lever"]
+# ATS_KEYWORDS = ["lever"]
 
 
 def extract_number(html_content: str) -> int:
