@@ -7,6 +7,7 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from utils import extract_number, extract_and_save
+from crawler_db import insert_company
 
 # Set up Selenium
 URL = "https://airtable.com/embed/appPGrJqA2zH65k5I/shrI8dno1rMGKZM8y/tblKU0jQiyIX182uU?backgroundColor=cyan&viewControls=on"
@@ -73,10 +74,9 @@ def getURL():
 
     response = driver.page_source
 
-    with open('hrefs.csv','w') as file:
-        for url in PROCESSED_URLS:
-            file.write(f'"{url[0]}","{url[1]}"\n')
-
+    for url in PROCESSED_URLS:
+        print(url)
+        insert_company(url)
 
     driver.quit()
 
