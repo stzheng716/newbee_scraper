@@ -15,11 +15,25 @@ def request_GPT(jobs):
     messages = [{"role": "system", "content": initial_prompt}]
 
     for job in jobs:
-
+        try:
             res = openai.ChatCompletion.create(
                 messages.append(
                     {"role": "user", "job": job}
                     ),
                 model="gpt-3.5-turbo",
-                messages=messages
+                messages=messages,
+                # made token used per request
+                max_tokens=200,
             )
+            print(res.choices[0].message.content)
+
+        except openai.error.AuthenticationError:
+            print("The API key is invalid or has insufficient permissions.")
+        except openai.error.RateLimitError:
+            print("Rate limit exceeded. Please wait before making more requests.")
+        except openai.error.OpenAIError:
+            print("A network-related error occurred while making the request.")
+        except KeyError:
+            print("API key not found in the .env file.")
+        except ValueError:
+            print("The input job descriptions are not in the expected format.")
