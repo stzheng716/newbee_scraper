@@ -8,13 +8,13 @@ def test_ashby():
     for url in ats_dict["ashby"]:
         print("JOBURL---->", url.careers_url)
         print("CoName---->", url.company_name)
-        scrape_ashby_job_board(url.careers_url, url.company_name)
+        scrape_ashby_job_board(url.careers_url, url.company_name, test=True)
         breakpoint()
 
 def test_greenhouse():
     ats_dict = sql_url_query()
     for url in ats_dict["greenhouse"]:
-        scrape_greenhouse_job_board(url.careers_url, url.company_name)
+        scrape_greenhouse_job_board(url.careers_url, url.company_name, test=True)
         print("JOBURL---->", url.careers_url)
         print("CoName---->", url.company_name)
         breakpoint()
@@ -24,7 +24,7 @@ def test_lever():
     for url in ats_dict["lever"]:
         print("JOBURL---->", url.careers_url)
         print("CoName---->", url.company_name)
-        scrape_lever_job_board(url.careers_url, url.company_name)
+        scrape_lever_job_board(url.careers_url, url.company_name, test=True)
         breakpoint()
 
 def test_all_boards():
@@ -34,14 +34,14 @@ def test_all_boards():
             if key == "lever":
                 print("JOBURL---->", url.careers_url)
                 print("CoName---->", url.company_name)
-                scrape_ashby_job_board(url.careers_url, url.company_name)
+                scrape_ashby_job_board(url.careers_url, url.company_name, test=True)
             elif key == "ashby":
                 print("JOBURL---->", url.careers_url)
                 print("CoName---->", url.company_name)
-                scrape_ashby_job_board(url.careers_url, url.company_name)
+                scrape_ashby_job_board(url.careers_url, url.company_name, test=True)
             elif key == "greenhouse":
                 print("JOBURL---->", url.careers_url)
                 print("CoName---->", url.company_name)
-                scrape_greenhouse_job_board(url.careers_url, url.company_name)
+                scrape_greenhouse_job_board(url.careers_url, url.company_name, test=True)
             breakpoint()
 

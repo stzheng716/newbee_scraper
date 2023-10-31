@@ -25,7 +25,7 @@ Roadblocks:
     -
 """
 
-def scrape_lever_job_board(url, company_name):
+def scrape_lever_job_board(url, company_name, test=False):
     response = requests.get(url, headers=headers)
     response.raise_for_status()  # Check if the request was successful
     soup = BeautifulSoup(response.content, 'html.parser')
@@ -58,7 +58,7 @@ def scrape_lever_job_board(url, company_name):
                 potential_jobs.append(job_data)
                 break
 
-    # print(len(potential_jobs))
-    # print(potential_jobs)
-    insert_jobs(potential_jobs)
-
+    if test:
+        print(potential_jobs)
+    else:
+        insert_jobs(potential_jobs)

@@ -37,7 +37,7 @@ Roadblocks:
 
 """
 
-def scrape_jobvite_job_board(url, company_name):
+def scrape_jobvite_job_board(url, company_name, test=False):
     response = requests.get(url, headers=headers)
     response.raise_for_status()  # Check if the request was successful
     soup = BeautifulSoup(response.content, 'html.parser')
@@ -68,7 +68,9 @@ def scrape_jobvite_job_board(url, company_name):
                             }
                 potential_jobs.append(job_data)
                 break
-    insert_jobs(potential_jobs)
 
-
-
+    if test:
+        print(potential_jobs)
+    else:
+        insert_jobs(potential_jobs)
+        
