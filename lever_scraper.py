@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import re
+from headers import headers
 from utils import KEYWORDS, insert_jobs
 
 
@@ -25,7 +26,7 @@ Roadblocks:
 """
 
 def scrape_lever_job_board(url, company_name):
-    response = requests.get(url)
+    response = requests.get(url, headers=headers)
     response.raise_for_status()  # Check if the request was successful
     soup = BeautifulSoup(response.content, 'html.parser')
     potential_jobs = []

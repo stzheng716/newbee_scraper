@@ -1,3 +1,4 @@
+import random
 from bs4 import BeautifulSoup
 import re
 from utils import KEYWORDS, insert_jobs
@@ -37,7 +38,7 @@ driver = webdriver.Chrome(options=options)
 def scrape_ashby_job_board(url, company_name):
     driver.get(url)
     try:
-        element =  WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.CLASS_NAME, "ashby-job-posting-brief")))
+        element =  WebDriverWait(driver, random.randint(2, 10)).until(EC.presence_of_element_located((By.CLASS_NAME, "ashby-job-posting-brief")))
         print(element)
     except TimeoutException:
         print("Page title couldn't be found")
@@ -66,5 +67,6 @@ def scrape_ashby_job_board(url, company_name):
                             }
                 potential_jobs.append(job_data)
                 break
+    
     insert_jobs(potential_jobs)
 
