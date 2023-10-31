@@ -8,9 +8,9 @@ def scrape_all_boards():
     for key in ["lever", "ashby", "greenhouse"]:
         for url in ats_dict[key]:
             if key == "lever":
-                scrape_lever_job_board(url.careers_url)
+                scrape_lever_job_board(url.careers_url, url.company_name)
             elif key == "ashby":
-                scrape_ashby_job_board(url.careers_url)
+                scrape_ashby_job_board(url.careers_url, url.company_name)
             elif key == "greenhouse":
-                scrape_greenhouse_job_board(url.careers_url)
+                scrape_greenhouse_job_board(url.careers_url, url.company_name)
             breakpoint()

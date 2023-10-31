@@ -7,21 +7,24 @@ def test_ashby():
     ats_dict = sql_url_query()
     for url in ats_dict["ashby"]:
         print("JOBURL---->", url.careers_url)
-        scrape_ashby_job_board(url.careers_url)
+        print("CoName---->", url.company_name)
+        scrape_ashby_job_board(url.careers_url, url.company_name)
         breakpoint()
 
 def test_greenhouse():
     ats_dict = sql_url_query()
     for url in ats_dict["greenhouse"]:
-        scrape_greenhouse_job_board(url.careers_url)
+        scrape_greenhouse_job_board(url.careers_url, url.company_name)
         print("JOBURL---->", url.careers_url)
+        print("CoName---->", url.company_name)
         breakpoint()
 
 def test_lever():
     ats_dict = sql_url_query()
     for url in ats_dict["lever"]:
         print("JOBURL---->", url.careers_url)
-        scrape_lever_job_board(url.careers_url)
+        print("CoName---->", url.company_name)
+        scrape_lever_job_board(url.careers_url, url.company_name)
         breakpoint()
 
 def test_all_boards():
@@ -30,12 +33,15 @@ def test_all_boards():
         for url in ats_dict[key]:
             if key == "lever":
                 print("JOBURL---->", url.careers_url)
-                scrape_ashby_job_board(url.careers_url)
+                print("CoName---->", url.company_name)
+                scrape_ashby_job_board(url.careers_url, url.company_name)
             elif key == "ashby":
                 print("JOBURL---->", url.careers_url)
-                scrape_ashby_job_board(url.careers_url)
+                print("CoName---->", url.company_name)
+                scrape_ashby_job_board(url.careers_url, url.company_name)
             elif key == "greenhouse":
                 print("JOBURL---->", url.careers_url)
-                scrape_greenhouse_job_board(url.careers_url)
+                print("CoName---->", url.company_name)
+                scrape_greenhouse_job_board(url.careers_url, url.company_name)
             breakpoint()
 
