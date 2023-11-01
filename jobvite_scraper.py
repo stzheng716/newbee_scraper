@@ -39,7 +39,12 @@ Roadblocks:
 
 def scrape_jobvite_job_board(url, company_name, test=False):
     response = requests.get(url, headers=headers)
-    response.raise_for_status()  # Check if the request was successful
+    try:
+        response.raise_for_status()  # Check if the request was successful
+    except (requests.HTTPError, requests.ConnectionError): 
+        print("Page title couldn't be found")
+        pass
+
     soup = BeautifulSoup(response.content, 'html.parser')
     potential_jobs = []
 
