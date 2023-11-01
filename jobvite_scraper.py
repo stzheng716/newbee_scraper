@@ -44,6 +44,7 @@ def scrape_jobvite_job_board(url, company_name, test=False):
     except (requests.HTTPError, requests.ConnectionError): 
         print("Page title couldn't be found")
         pass
+
     soup = BeautifulSoup(response.content, 'html.parser')
     potential_jobs = []
 
