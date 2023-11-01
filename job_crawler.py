@@ -1,3 +1,4 @@
+import random
 import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -27,12 +28,14 @@ def getURL():
     - hrefs.txt file: URLS to job boards, each on a new line.
     '''
     driver.set_window_size(1024, 1024)
+    driver.execute_script("document.body.style.zoom='25%'")
     driver.get(URL)
     try:
-        element =  WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "viewContainer")))
+        element =  WebDriverWait(driver, random.randint(2, 10)).until(EC.presence_of_element_located((By.ID, "viewContainer")))
         print(element)
     except TimeoutException:
         print("Page title couldn't be found")
+        pass
 
     initial_response = driver.page_source
     print("INITIAL RESPONSE", type(initial_response))
@@ -52,12 +55,12 @@ def getURL():
         actions.move_to_element(scrollable_div).click().send_keys(Keys.PAGE_DOWN).perform()
 
         # Wait for the page to load or for more content to appear
-        time.sleep(2)
+        time.sleep(random.randint(0, 10))
 
         # Get the updated page source after scroll
         response = driver.page_source
         PROCESSED_URLS = extract_and_save(response, PROCESSED_URLS)
-        print (PROCESSED_URLS)
+        print ("PROCESSED_URLS >>>>>",PROCESSED_URLS)
 
         # Check if we're at the bottom of the page
         if len(PROCESSED_URLS) == previous_set_size:
