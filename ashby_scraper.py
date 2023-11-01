@@ -38,12 +38,13 @@ driver = webdriver.Chrome(options=options)
 def scrape_ashby_job_board(url, company_name, test=False):
     driver.get(url)
     try:
-        element =  WebDriverWait(driver, random.randint(2, 10)).until(EC.presence_of_element_located((By.CLASS_NAME, "ashby-job-posting-brief")))
-        print(element)
-    except TimeoutException:
+        WebDriverWait(driver, random.randint(2, 10)).until(EC.presence_of_element_located((By.CLASS_NAME, "ashby-job-posting-brief")))
+    except (TimeoutException):
         print("Page title couldn't be found")
+        pass
+        #TODO: handle this error better: track it, remove from db, etc. 
+
     response = driver.page_source
-    # response.raise_for_status()  # Check if the request was successful
     soup = BeautifulSoup(response, 'html.parser')
     potential_jobs = []
 
@@ -53,6 +54,7 @@ def scrape_ashby_job_board(url, company_name, test=False):
         location = job_div.find('p').get_text().split("•")[1].strip()
         job_url = BASE_URL + job_div.parent['href']
         job_id = job_url.split("/")[-1]
+
 
         # Check if the title indicates a software engineering or related role
         for keyword in KEYWORDS:

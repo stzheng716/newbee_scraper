@@ -35,6 +35,7 @@ def getURL():
         print(element)
     except TimeoutException:
         print("Page title couldn't be found")
+        pass
 
     initial_response = driver.page_source
     print("INITIAL RESPONSE", type(initial_response))
