@@ -9,6 +9,7 @@ def request_GPT(jobs):
 
     """
     input: [{},{}]
+    output:[{entry_level: True, job_id: job_id}]
     """
 
     initial_prompt = f"You are a job filter bot. You will be given job description and determine if they are entry level jobs"
