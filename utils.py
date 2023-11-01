@@ -41,7 +41,7 @@ def extract_number(html_content: str) -> int:
     if div_element:  # Check if the div_element was found
         text_content = div_element.text
         number_str = text_content.split()[0]
-        # Remove commas and convert to intege(
+        # Remove commas and convert to integer
         number = int(number_str.replace(",", ""))
         return number
 
