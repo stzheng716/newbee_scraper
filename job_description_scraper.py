@@ -36,7 +36,8 @@ def scrape_job_description(url):
     return job_description
 
 
-for job in sql_job_posting_query():
-    jd_text = scrape_job_description(job.job_url)
-    print(jd_text)
-    time.sleep(0.5)
+def run_tier_3_scrape():
+    for job in sql_job_posting_query():
+        jd_text = scrape_job_description(job.job_url)
+        print(jd_text)
+        time.sleep(0.5)
