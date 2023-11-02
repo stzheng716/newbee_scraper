@@ -145,11 +145,24 @@ def sql_job_posting_query():
 
 def insert_jd_to_db(jd, job_id):
 
-        update_query = f"""
-            UPDATE job_postings
-            SET job_description = %s
-            WHERE job_id = %s;
-            """
-        
+    update_query = f"""
+        UPDATE job_postings
+        SET job_description = %s
+        WHERE job_id = %s;
+        """
+    
+    try:
         # Execute the update query
         cursor.execute(update_query, (jd, job_id))
+        # If the update is successful, commit the transaction
+        cursor.connection.commit()
+    except psycopg2.Error as e:
+        # Rollback the transaction on error
+        cursor.connection.rollback()
+        print(f"An error occurred: {e}")
+        # Optionally, re-raise the exception if you want it to bubble up
+        raise e
+    except Exception as e:
+        # Handle other exceptions
+        print(f"A non-psycopg2 error occurred: {e}")
+        raise e
