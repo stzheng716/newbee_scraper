@@ -9,8 +9,17 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-#connect to the database directly for the insert
+#connect to the local database directly for the insert
 conn = psycopg2.connect(database=os.environ["DATABASE_NAME"])
+
+#connect to the AWS database directly for the insert
+# conn = psycopg2.connect(
+#     dbname=os.environ["DATABASE_NAME"],
+#     user=os.environ["RDS_USERNAME"],
+#     password=os.environ["RDS_PW"],
+#     host=os.environ["AWS_DATABASE_URL_EP"]
+# )
+
 conn.autocommit = True
 cursor = conn.cursor()
 
@@ -110,7 +119,7 @@ def insert_jobs(jobs):
         job_id = row["job_id"]
         job_url = row["job_url"]
         json_response = row["json_response"]
-        # breakpoint()
+
         insert_query = f"""
             INSERT INTO job_postings (job_title, company_name, job_id, job_url, json_response)
             VALUES (%s, %s, %s, %s, %s)
@@ -122,17 +131,14 @@ def sql_job_posting_query():
     """
     functions that returns a dictionary with list of all of the specific ats platforms with a list of job postings
 
-    return {"lever": [{id, job_title, job_url, job_id, job_scraped_date, company_name, json_response} ,{}]
-        ,"greenhouse": [{}{}],
-        "ashby":[{},{}]}
+    return [{job_postings}]
     """
 
-    job_posting_dict = {}
+    job_posting_list = []
 
     with app.app_context():
         for ats in ATS_KEYWORDS:
-            company_boards = JobPostings.query.filter(
+            job_posting_list += JobPostings.query.filter(
                 JobPostings.job_url.like(f"%{ats}%")).all()
-            job_posting_dict[ats] = company_boards
-
-    return job_posting_dict
+            
+    return job_posting_list
