@@ -9,8 +9,17 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-#connect to the database directly for the insert
+#connect to the local database directly for the insert
 conn = psycopg2.connect(database=os.environ["DATABASE_NAME"])
+
+#connect to the AWS database directly for the insert
+# conn = psycopg2.connect(
+#     dbname=os.environ["DATABASE_NAME"],
+#     user=os.environ["RDS_USERNAME"],
+#     password=os.environ["RDS_PW"],
+#     host=os.environ["AWS_DATABASE_URL_EP"]
+# )
+
 conn.autocommit = True
 cursor = conn.cursor()
 
@@ -110,7 +119,7 @@ def insert_jobs(jobs):
         job_id = row["job_id"]
         job_url = row["job_url"]
         json_response = row["json_response"]
-        # breakpoint()
+
         insert_query = f"""
             INSERT INTO job_postings (job_title, company_name, job_id, job_url, json_response)
             VALUES (%s, %s, %s, %s, %s)
