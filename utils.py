@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 from app import app
-from models import JobBoards
+from models import JobBoards, JobPostings
 import json
 
 import psycopg2
@@ -118,3 +118,21 @@ def insert_jobs(jobs):
             """
         cursor.execute(insert_query, (job_title, company_name, job_id, job_url, json.dumps(json_response)))
 
+def sql_job_posting_query():
+    """
+    functions that returns a dictionary with list of all of the specific ats platforms with a list of job postings
+
+    return {"lever": [{id, job_title, job_url, job_id, job_scraped_date, company_name, json_response} ,{}]
+        ,"greenhouse": [{}{}],
+        "ashby":[{},{}]}
+    """
+
+    job_posting_dict = {}
+
+    with app.app_context():
+        for ats in ATS_KEYWORDS:
+            company_boards = JobPostings.query.filter(
+                JobPostings.job_url.like(f"%{ats}%")).all()
+            job_posting_dict[ats] = company_boards
+
+    return job_posting_dict
