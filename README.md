@@ -48,4 +48,4 @@ ctrl+d to qui
 
 ### REMINDER:
 
-Please git pull and pip install when before you start working on the codebsae to ensure you have the most up-to-date packages and code.
+Please `git pull` and `pip install` when before you start working on the codebase to ensure you have the most up-to-date packages and code.
