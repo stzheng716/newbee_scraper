@@ -131,6 +131,7 @@ def sql_job_posting_query():
     """
     functions that returns a dictionary with list of all of the specific ats platforms with a list of job postings
 
+    return [{job_postings}]
     """
 
     job_posting_list = []
