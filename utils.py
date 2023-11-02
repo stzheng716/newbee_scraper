@@ -119,7 +119,7 @@ def insert_jobs(jobs):
         job_id = row["job_id"]
         job_url = row["job_url"]
         json_response = row["json_response"]
-        # breakpoint()
+
         insert_query = f"""
             INSERT INTO job_postings (job_title, company_name, job_id, job_url, json_response)
             VALUES (%s, %s, %s, %s, %s)
