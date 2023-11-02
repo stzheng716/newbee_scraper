@@ -81,6 +81,10 @@ class JobPostings(db.Model):
         nullable=False
     )
 
+    job_description = db.Column(
+        db.Text
+    )
+
     json_response = db.Column(
         db.JSON
     )

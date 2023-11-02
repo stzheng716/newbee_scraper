@@ -142,3 +142,14 @@ def sql_job_posting_query():
                 JobPostings.job_url.like(f"%{ats}%")).all()
             
     return job_posting_list
+
+def insert_jd_to_db(jd, job_id):
+
+        update_query = f"""
+            UPDATE job_postings
+            SET job_description = %s
+            WHERE job_id = %s;
+            """
+        
+        # Execute the update query
+        cursor.execute(update_query, (jd, job_id))
