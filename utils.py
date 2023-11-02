@@ -122,17 +122,13 @@ def sql_job_posting_query():
     """
     functions that returns a dictionary with list of all of the specific ats platforms with a list of job postings
 
-    return {"lever": [{id, job_title, job_url, job_id, job_scraped_date, company_name, json_response} ,{}]
-        ,"greenhouse": [{}{}],
-        "ashby":[{},{}]}
     """
 
-    job_posting_dict = {}
+    job_posting_list = []
 
     with app.app_context():
         for ats in ATS_KEYWORDS:
-            company_boards = JobPostings.query.filter(
+            job_posting_list += JobPostings.query.filter(
                 JobPostings.job_url.like(f"%{ats}%")).all()
-            job_posting_dict[ats] = company_boards
-
-    return job_posting_dict
+            
+    return job_posting_list
