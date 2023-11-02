@@ -14,6 +14,8 @@ load_dotenv()
 # conn = psycopg2.connect(database=os.environ["DATABASE_NAME"])
 
 #connect to the AWS database directly for the insert
+#TODO: dry up this code by combining with utils.py
+
 conn = psycopg2.connect(
     dbname=os.environ["DATABASE_NAME"],
     user=os.environ["RDS_USERNAME"],
