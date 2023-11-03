@@ -6,7 +6,7 @@
 3.) activate your venv<br>
 4.) create your .env file
 ```
-SK=abc123<br>
+SECRET_KEY=[YOUR SECRET KEY HERE] or ask someone on the team for the secret key
 DATABASE_URL="postgresql:///job_crawler"
 DATABASE_NAME="job_crawler"
 ```
@@ -14,7 +14,7 @@ DATABASE_NAME="job_crawler"
 ```
 psql
 CREATE DATABASE job_crawler
-ctrl+d to qui
+ctrl+d to quit
 ```
 6.) in the terminal, run the `python3 migrate.py` this will drop all of the tables, create the latest version of the tables, and add the contents of the hrefs.csv file to your local database
 
@@ -48,4 +48,4 @@ ctrl+d to qui
 
 ### REMINDER:
 
-Please git pull and pip install when before you start working on the codebsae to ensure you have the most up-to-date packages and code.
+Please `git pull` and `pip install` when before you start working on the codebase to ensure you have the most up-to-date packages and code.
