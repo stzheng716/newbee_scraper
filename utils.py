@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 from app import app
-from models import JobBoards
+from models import JobBoards, JobPostings
 import json
 
 import psycopg2
@@ -9,8 +9,17 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-#connect to the database directly for the insert
+#connect to the local database directly for the insert
 conn = psycopg2.connect(database=os.environ["DATABASE_NAME"])
+
+#connect to the AWS database directly for the insert
+# conn = psycopg2.connect(
+#     dbname=os.environ["DATABASE_NAME"],
+#     user=os.environ["RDS_USERNAME"],
+#     password=os.environ["RDS_PW"],
+#     host=os.environ["AWS_DATABASE_URL_EP"]
+# )
+
 conn.autocommit = True
 cursor = conn.cursor()
 
@@ -41,7 +50,7 @@ def extract_number(html_content: str) -> int:
     if div_element:  # Check if the div_element was found
         text_content = div_element.text
         number_str = text_content.split()[0]
-        # Remove commas and convert to intege(
+        # Remove commas and convert to integer
         number = int(number_str.replace(",", ""))
         return number
 
@@ -110,7 +119,7 @@ def insert_jobs(jobs):
         job_id = row["job_id"]
         job_url = row["job_url"]
         json_response = row["json_response"]
-        # breakpoint()
+
         insert_query = f"""
             INSERT INTO job_postings (job_title, company_name, job_id, job_url, json_response)
             VALUES (%s, %s, %s, %s, %s)
@@ -118,3 +127,42 @@ def insert_jobs(jobs):
             """
         cursor.execute(insert_query, (job_title, company_name, job_id, job_url, json.dumps(json_response)))
 
+def sql_job_posting_query():
+    """
+    functions that returns a dictionary with list of all of the specific ats platforms with a list of job postings
+
+    return [{job_postings}]
+    """
+
+    job_posting_list = []
+
+    with app.app_context():
+        for ats in ATS_KEYWORDS:
+            job_posting_list += JobPostings.query.filter(
+                JobPostings.job_url.like(f"%{ats}%")).all()
+            
+    return job_posting_list
+
+def insert_jd_to_db(jd, job_id):
+
+    update_query = f"""
+        UPDATE job_postings
+        SET job_description = %s
+        WHERE job_id = %s;
+        """
+    
+    try:
+        # Execute the update query
+        cursor.execute(update_query, (jd, job_id))
+        # If the update is successful, commit the transaction
+        cursor.connection.commit()
+    except psycopg2.Error as e:
+        # Rollback the transaction on error
+        cursor.connection.rollback()
+        print(f"An error occurred: {e}")
+        # Optionally, re-raise the exception if you want it to bubble up
+        raise e
+    except Exception as e:
+        # Handle other exceptions
+        print(f"A non-psycopg2 error occurred: {e}")
+        raise e
