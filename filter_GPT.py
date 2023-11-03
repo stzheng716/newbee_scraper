@@ -19,14 +19,15 @@ def request_GPT(jobs):
         try:
             res = openai.ChatCompletion.create(
                 messages.append(
-                    {"role": "user", "job": job}
+                    {"role": "user", "job": job.job_description}
                     ),
                 model="gpt-3.5-turbo",
                 messages=messages,
                 # made token used per request
-                max_tokens=200,
+                max_tokens=1000,
             )
             print(res.choices[0].message.content)
+            breakpoint()
 
         except openai.error.AuthenticationError:
             print("The API key is invalid or has insufficient permissions.")
