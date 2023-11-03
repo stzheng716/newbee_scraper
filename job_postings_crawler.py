@@ -16,4 +16,6 @@ def scrape_all_boards():
             elif key == "greenhouse":
                 print("CoName>>", url.company_name, "URL>>>", url.careers_url )
                 scrape_greenhouse_job_board(url.careers_url, url.company_name)
+
+scrape_all_boards()
             
