@@ -2,7 +2,7 @@ import json
 import openai
 from dotenv import dotenv_values
 import argparse
-from utils import sample_job_description
+from utils import sample_job_description, insert_GPT_response
 
 config = dotenv_values(".env")
 openai.api_key = config["OPEN_AI_API_KEY"]
@@ -36,8 +36,12 @@ def request_GPT(jobs):
             )
             print(job[1])
             print(res)
-            print(res.choices[0].message.content)
+            resp = json.loads(res.choices[0].message.content)
+            print(resp)
+            
             breakpoint()
+            insert_GPT_response(resp, job[3])
+            print("Go Check PG Admin! for job id>>>", job[3])
 
         except openai.error.AuthenticationError:
             print("The API key is invalid or has insufficient permissions.")
