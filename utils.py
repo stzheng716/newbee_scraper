@@ -9,10 +9,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-#connect to the local database directly for the insert
+# connect to the local database directly for the insert
 # conn = psycopg2.connect(database=os.environ["DATABASE_NAME"])
 
-#connect to the AWS database directly for the insert
+# connect to the AWS database directly for the insert
 conn = psycopg2.connect(
     dbname=os.environ["DATABASE_NAME"],
     user=os.environ["RDS_USERNAME"],
@@ -29,7 +29,7 @@ KEYWORDS = ["developer", "software engineer",
             "engineer", "software", "engineering"]
 ATS_KEYWORDS = ["ashby", "greenhouse", "lever"]
 
-## FOR TESTING
+# FOR TESTING
 # ATS_KEYWORDS = ["lever"]
 
 
@@ -110,6 +110,7 @@ def sql_url_query():
 
     return ats_dict
 
+
 def insert_jobs(jobs):
     """take list of dictionaries and insert into the main postgres database"""
 
@@ -122,10 +123,27 @@ def insert_jobs(jobs):
 
         insert_query = f"""
             INSERT INTO job_postings (job_title, company_name, job_id, job_url, json_response)
-            VALUES (%s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s::jsonb))
             ON CONFLICT (job_id) DO NOTHING;
             """
-        cursor.execute(insert_query, (job_title, company_name, job_id, job_url, json.dumps(json_response)))
+        cursor.execute(insert_query, (job_title, company_name,
+                       job_id, job_url, json.dumps(json_response)))
+
+
+def insert_GPT_response(response_json, id):
+    """Performs lookup of id in job_posting - inserts GPT object into JSON_response field
+    Maintains data already saved into the json_response field"""
+
+    insert_query = """
+        UPDATE job_postings
+        SET json_response = (
+            json_response::jsonb || 
+            %s::jsonb
+        )::json
+        WHERE job_id = %s;
+    """
+    cursor.execute(insert_query, (json.dumps(response_json), id))
+
 
 def sql_job_posting_query():
     """
@@ -140,8 +158,9 @@ def sql_job_posting_query():
         for ats in ATS_KEYWORDS:
             job_posting_list += JobPostings.query.filter(
                 JobPostings.job_url.like(f"%{ats}%")).all()
-            
+
     return job_posting_list
+
 
 def insert_jd_to_db(jd, job_id):
 
@@ -150,7 +169,7 @@ def insert_jd_to_db(jd, job_id):
         SET job_description = %s
         WHERE job_id = %s;
         """
-    
+
     try:
         # Execute the update query
         cursor.execute(update_query, (jd, job_id))
@@ -201,10 +220,11 @@ def select_US_roles_entry():
         ' Wisconsin', ' WI', ' Wyoming', ' WY','% US %', '% US - %', ' US', 'US ', 'US -', '%United States%', '%US%', ' United States', 'United States ', 'US',
         'Boston', 'San Francisco', 'Mountain View', 'Remote', 'Seattle', 'Portland', 'Denver'
         ])
-        AND (job_title NOT ILIKE '%senior%' AND job_title NOT ILIKE '%staff%' AND job_title NOT ILIKE '%director%' AND job_title NOT ILIKE '%manager%' AND job_title NOT ILIKE '%sr.%' AND job_title NOT ILIKE '%data%' AND job_title NOT ILIKE '%head%' AND job_title NOT ILIKE '%sr %' AND job_title NOT ILIKE '%Mechanical%' AND job_title NOT ILIKE '%lead%' AND job_title NOT ILIKE '%net%' AND job_title NOT ILIKE '%Electrical%' AND job_title NOT ILIKE '%Principal%' AND job_title NOT ILIKE '%VP%' AND job_title NOT ILIKE '%Chassis%' AND job_title NOT ILIKE '%Legal%' AND job_title NOT ILIKE '%Avionics%' AND job_title NOT ILIKE '%President%');
+        AND (job_title NOT ILIKE '%senior%' AND job_title NOT ILIKE '%staff%' AND job_title NOT ILIKE '%director%' AND job_title NOT ILIKE '%manager%' AND job_title NOT ILIKE '%sr.%' AND job_title NOT ILIKE '%data%' AND job_title NOT ILIKE '%head%' AND job_title NOT ILIKE '%sr %' AND job_title NOT ILIKE '%Mechanical%' AND job_title NOT ILIKE '%lead%' AND job_title NOT ILIKE '%net%' AND job_title NOT ILIKE '%Electrical%' AND job_title NOT ILIKE '%Principal%' AND job_title NOT ILIKE '%VP%' AND job_title NOT ILIKE '%Chassis%' AND job_title NOT ILIKE '%Legal%' AND job_title NOT ILIKE '%Avionics%' AND job_title NOT ILIKE '%President%'
+        AND NOT (json_response ? 'entry_level'));
     """
     cursor.execute(select_query)
     return cursor.fetchall()
 
-sample_job_description = "Here is an example of job that should return 'True': Who We AreVerkada is the largest cloud-based B2B physical security platform company in the world. Only Verkada offers six product lines — video security cameras, access control, environmental sensors, alarms, workplace and intercoms — integrated with a single cloud-based software platform. Designed with simplicity and scalability in mind, Verkada gives organizations the real-time insight to know what could impact the safety and comfort of people throughout their physical environment, while empowering them to take immediate action to minimize security risks, workplace frustrations and costly inefficiencies. Founded in 2016 with more than $360M in funding raised to date, Verkada has expanded rapidly with 15 offices across three continents, 1,600+ full-time employees and 17,000+ customers across 70+ countries, including 45 companies in the Fortune 500.About the Alarms Team: As a member of the Alarms engineering team, you will be responsible for building compelling user experiences for one of Verkada’s major new product categories. This is an opportunity to take ownership over software products which keep our customers protected in times of critical need. You’ll be working alongside a small, dynamic team of frontend, backend and firmware engineers to develop these experiences. Our team operates as a startup within a startup, so you can expect a lot of autonomy and impact on the direction of the Alarms product category. If you are an experienced, Backend Engineer who is excited about building new ways to keep people safe and secure, then we want to hear from you. Who You Are:Excited about creating best-in-class products which protect people and propertyYou can take an ambitious product or technical idea and drive it to completionYou are excited about the idea of working on large scale backend services, computer vision pipelines and / or embedded systems.Experience:3+ years of industry software engineering experience.Mastery of at least one common server programming language (e.g. Python or Go)Mastery of scalable backend design — Including databases, queues and blob storageExperience working in a fast-paced software development environment.Recommended Skills:Software architecture and API design experienceGood understanding of at least one relational database technology, including performance and load characteristics, transactions and lockingExperience with some of the following technologies: Postgres or MySQL, Distributed high concurrency key-value storage (Redis, DynamoDB), Docker, AWS, Kubernetes, Kafka, Embedded systems (Raspbian, Embedded Linux, FreeRTOS)Culture and Values:Self-motivated problem solver: At Verkada, you will tackle large, complex problems with no clear answers. Teach and learn: You will learn new technologies while being entrusted with the technical ownership of major systems, and we hope to learn something from you in turn. Growth mindset: As a small, fast-growing startup, every day brings new challenges and opportunities for growth, and we want you to grow with us!Perks and Benefits:Generous company paid medical, dental & vision insurance coverage Unlimited paid time off & 11 companywide paid holidays Wellness allowance Commuter benefits Healthy lunches and dinners provided daily Generous paid parental leave policy & fertility benefits  $120,000 - $280,000 a yearVerkada is an equal opportunity employer. We strive to be a welcoming place for everyone, and we do our best to make sure all people feel supported and connected at work. A big part of that effort is support for members and allies of our internal communities like Women at Verkada, Pride at Verkada, Multicultural at Verkada, and Parents at Verkada."
 
+sample_job_description = "Here is an example of job that should return 'True': Who We AreVerkada is the largest cloud-based B2B physical security platform company in the world. Only Verkada offers six product lines — video security cameras, access control, environmental sensors, alarms, workplace and intercoms — integrated with a single cloud-based software platform. Designed with simplicity and scalability in mind, Verkada gives organizations the real-time insight to know what could impact the safety and comfort of people throughout their physical environment, while empowering them to take immediate action to minimize security risks, workplace frustrations and costly inefficiencies. Founded in 2016 with more than $360M in funding raised to date, Verkada has expanded rapidly with 15 offices across three continents, 1,600+ full-time employees and 17,000+ customers across 70+ countries, including 45 companies in the Fortune 500.About the Alarms Team: As a member of the Alarms engineering team, you will be responsible for building compelling user experiences for one of Verkada’s major new product categories. This is an opportunity to take ownership over software products which keep our customers protected in times of critical need. You’ll be working alongside a small, dynamic team of frontend, backend and firmware engineers to develop these experiences. Our team operates as a startup within a startup, so you can expect a lot of autonomy and impact on the direction of the Alarms product category. If you are an experienced, Backend Engineer who is excited about building new ways to keep people safe and secure, then we want to hear from you. Who You Are:Excited about creating best-in-class products which protect people and propertyYou can take an ambitious product or technical idea and drive it to completionYou are excited about the idea of working on large scale backend services, computer vision pipelines and / or embedded systems.Experience:3+ years of industry software engineering experience.Mastery of at least one common server programming language (e.g. Python or Go)Mastery of scalable backend design — Including databases, queues and blob storageExperience working in a fast-paced software development environment.Recommended Skills:Software architecture and API design experienceGood understanding of at least one relational database technology, including performance and load characteristics, transactions and lockingExperience with some of the following technologies: Postgres or MySQL, Distributed high concurrency key-value storage (Redis, DynamoDB), Docker, AWS, Kubernetes, Kafka, Embedded systems (Raspbian, Embedded Linux, FreeRTOS)Culture and Values:Self-motivated problem solver: At Verkada, you will tackle large, complex problems with no clear answers. Teach and learn: You will learn new technologies while being entrusted with the technical ownership of major systems, and we hope to learn something from you in turn. Growth mindset: As a small, fast-growing startup, every day brings new challenges and opportunities for growth, and we want you to grow with us!Perks and Benefits:Generous company paid medical, dental & vision insurance coverage Unlimited paid time off & 11 companywide paid holidays Wellness allowance Commuter benefits Healthy lunches and dinners provided daily Generous paid parental leave policy & fertility benefits  $120,000 - $280,000 a yearVerkada is an equal opportunity employer. We strive to be a welcoming place for everyone, and we do our best to make sure all people feel supported and connected at work. A big part of that effort is support for members and allies of our internal communities like Women at Verkada, Pride at Verkada, Multicultural at Verkada, and Parents at Verkada."
