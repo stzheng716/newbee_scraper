@@ -3,31 +3,39 @@ import psycopg2
 import os
 from urllib.parse import urlparse
 from dotenv import load_dotenv
-
+from app import DEV
 import sqlite3
-sq3_con = sqlite3.connect("crawler.db")
+sq3_con = sqlite3.connect("job_boards.db")
 sq3_cur = sq3_con.cursor()
 
 load_dotenv()
 
-#connect to the local database directly for the insert
+# connect to the local database directly for the insert
 # conn = psycopg2.connect(database=os.environ["DATABASE_NAME"])
 
-#connect to the AWS database directly for the insert
-#TODO: dry up this code by combining with utils.py
+# connect to the AWS database directly for the insert
+# TODO: dry up this code by combining with utils.py
+# QUESTION: Why do we need to make another connection to the DB via psycopg when we've already established it in the app.py? 
 
-conn = psycopg2.connect(
-    dbname=os.environ["DATABASE_NAME"],
-    user=os.environ["RDS_USERNAME"],
-    password=os.environ["RDS_PW"],
-    host=os.environ["AWS_DATABASE_URL_EP"]
-)
+# Double checks DEV environment var and connects to appropriate DB
+def db_connect(DEV):
+    if DEV:
+        psycopg2.connect(
+            dbname=os.environ["TEST_DATABASE_NAME"]
+        )
+    else:
+        psycopg2.connect(
+            dbname=os.environ["DATABASE_NAME"],
+            user=os.environ["RDS_USERNAME"],
+            password=os.environ["RDS_PW"],
+            host=os.environ["AWS_DATABASE_URL_EP"]
+        )
 
-
+conn = db_connect(DEV)
 conn.autocommit = True
 cursor = conn.cursor()
 
-#table structures to update
+# table structures to update
 table_name = 'job_boards'
 columns = ('company_name', 'careers_url')
 
@@ -57,10 +65,10 @@ def extract_domain(url):
     return domain
 
 
-#pull all of the data from the crawler temporary database
+# pull all of the data from the crawler temporary database
 crawler_data = sq3_cur.execute("SELECT * FROM crawler")
 
-#interate across all of the rows in crawler data, inserting them as we go
+# iterate across all of the rows in crawler data, inserting them as we go
 for row in crawler_data.fetchall():
     company_name = row[0]
     careers_url = row[1]
