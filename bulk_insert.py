@@ -20,12 +20,12 @@ load_dotenv()
 # Double checks DEV environment var and connects to appropriate DB
 def db_connect(DEV):
     if DEV:
-        psycopg2.connect(
-            dbname=os.environ["TEST_DATABASE_NAME"]
+        return psycopg2.connect(
+            dbname=os.environ["TEST_DATABASE_URL"]
         )
     else:
-        psycopg2.connect(
-            dbname=os.environ["DATABASE_NAME"],
+        return psycopg2.connect(
+            dbname=os.environ["DATABASE_URL"],
             user=os.environ["RDS_USERNAME"],
             password=os.environ["RDS_PW"],
             host=os.environ["AWS_DATABASE_URL_EP"]

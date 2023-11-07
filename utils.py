@@ -66,7 +66,7 @@ def extract_and_save(response, url_set):
         -set will be set of tuples (company_name: str, job_url: str)
 
     Returns:
-    - the filled set, to be procssed by the calling parent
+    - the filled set, to be processed by the calling parent
     """
     soup = BeautifulSoup(response, "html.parser")
 
