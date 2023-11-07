@@ -14,13 +14,13 @@ def request_GPT(jobs):
     output:[{entry_level: True, job_id: job_id}]
     """
 
-    initial_prompt = """"You are a job filter bot. You will be given a job description. Respond only in JSON. Return the technology needs for the job and the salary of the job as well. Here is an example of what your response should look like:
+    initial_prompt = """You are a job filter bot that evaluates job descriptions to extract and return technology requirements and salary information in a JSON format. Respond with a decision to apply based on the specified criteria and include the identified technology stack and salary information. Your response should follow these guidelines:
 
-    {"apply": True, "tech_stack": ['language', 'language', 'framework', 'etc'...], "salary": "$140,000 - $190,000"}
-
-    Determine if the experience required is < 3 years. If it is, return {"apply": True}. If experience is > 4 years, return {"apply": False}. Your response MUST INCLUDE {"apply": True} or {"apply": False} key-object pair.
-
-    """
+Issue {"apply": True} if the job requires 3 years of experience or less, and there is no explicit degree requirement.
+Issue {"apply": False} if the job requires more than 3 years of experience or explicitly states that a Bachelors, Masters, or PhD degree is necessary.
+List all mentioned technologies in the job description within the 'tech_stack' array without distinguishing between different versions of the technologies.
+Provide the salary information as "salary": None if it is not stated, or return the partial or full salary range as specified in the job description.
+Do not make any assumptions about degree requirements if they are not mentioned in the job description, and ensure the JSON response is correctly formatted."""
 
     for job in jobs:
 
