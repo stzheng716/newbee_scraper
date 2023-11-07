@@ -1,5 +1,5 @@
 import sqlite3
-con = sqlite3.connect("crawler.db")
+con = sqlite3.connect("job_boards.db")
 cur = con.cursor()
 
 ##should probably be a one of script
