@@ -1,7 +1,7 @@
-from utils import sql_url_query
-from ashby_scraper import scrape_ashby_job_board
-from greenhouse_scraper import scrape_greenhouse_job_board
-from lever_scraper import scrape_lever_job_board
+from utilities.utils import sql_url_query
+from T2.ashby_scraper import scrape_ashby_job_board
+from T2.greenhouse_scraper import scrape_greenhouse_job_board
+from T2.lever_scraper import scrape_lever_job_board
 
 """ Passing the variable "test" isn't necessary when calling these functions, but 
 running it with test=True prints the jobs to the terminal instead of adding it
