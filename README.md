@@ -48,4 +48,11 @@ ctrl+d to quit
 
 ### REMINDER:
 
-Please `git pull` and `pip install` when before you start working on the codebase to ensure you have the most up-to-date packages and code.
+Please `git pull` and `pip install -r requirements.txt` before you start working on the codebase to ensure you have the most up-to-date packages and code.
+
+
+## The Flow:
+get_job_boards.py > runs sqlite_db.py (creates job_boards.db)
+
+bulk_insert.py inserts job_boards.db into the working database
+
