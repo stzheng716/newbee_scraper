@@ -2,7 +2,8 @@ from urllib.parse import urlparse
 from collections import Counter
 
 def count():
-    '''A frequency counter.
+    '''A frequency counter from early stages. We used it to count the frequency
+    of ATS sites from the job_boards table
 
     Takes in a file of URLs, each on new lines
     Extracts the base URL, creates dict with base: count
