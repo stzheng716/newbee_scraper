@@ -21,7 +21,7 @@ ctrl+d to quit
 TODO: make the damn tables
 7. from the root project dir, populate your local database:
 ```
-pg_dump -O database_utils/backup_database.sql | psql postgresql://job_crawler
+psql -d job_crawler -f database_utils/backup_database.sql
 ```
 
 
