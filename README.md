@@ -3,9 +3,19 @@
 ### Running the project locally
 1. clone the repo<br>
 2. navigate to the project root<br>
-3. activate and enter your venv<br>
-4. pip install -r requirements.txt
-5. create your .env file
+3. create your venv<br>
+```
+python -m venv venv
+```
+5. activate and enter your venv<br>
+```
+source venv/bin/activate
+```
+6. install dependencies
+```
+pip install -r requirements.txt
+```
+7. create your .env file
 ```
 SECRET_KEY=[YOUR SECRET KEY HERE] or ask someone on the team for the secret key
 DATABASE_URL=postgresql:///job_crawler
@@ -48,4 +58,11 @@ Where are we looking for it?
 4. Run the job descriptions through GPT
 
 ### REMINDER:
-Please `git pull` and `pip install -r requirements.txt` before you start working on the codebase to ensure you have the most up-to-date packages and code.
+Please make sure to run the following commands before you start working on the codebase to ensure you have the most up-to-date packages and code:
+```
+git pull
+``` 
+```
+pip install -r requirements.txt
+``` 
+
