@@ -22,14 +22,9 @@ def request_GPT(jobs):
     That said - there's some string-fu happening to clean the GPT responses up before converting them to Python dicts. 
     """
 
-    initial_prompt = """You are a job filter bot that evaluates job descriptions to extract and return technology requirements and salary information in a JSON format. Respond with a decision to apply based on the specified criteria and include the identified technology stack and salary information. Your response should follow these guidelines:
-    Issue {"apply": "True"} if the job requires 3 years of experience or less, and there is no explicit degree requirement.
-    Issue {"apply": "False"} if the job requires more than 3 years of experience or explicitly states that a Bachelors, Masters, or PhD degree is necessary.
-    List all mentioned technologies in the job description within the 'tech_stack' array without distinguishing between different versions of the technologies.
-    Provide the salary information as {"salary": "None"} if it is not stated, or return the partial or full salary range as specified in the job description.
-    Do not make any assumptions about degree requirements if they are not mentioned in the job description. Return only JSON. 
+    initial_prompt = """You are a job filter bot that evaluates job descriptions. You will extract and return technology stack used and salary as a JSON object. Assess if the job would be appropriate for a full stack developer with 1-3 years of experience, inclusive. Your response should follow these guidelines: return {"apply": "True"} if the job requires 3 years of experience or less, and there is no explicit degree requirement. If it requires the applicant is currently pursuing a degree the application is disqualified. Do not make any assumptions about degree requirements if they are not mentioned in the job description. Issue {"apply": "False"} if the job requires more than 3 years of experience or explicitly states that a Bachelors, Masters, or PhD degree is necessary. List all mentioned technologies in the job description within the "tech_stack" array without distinguishing between different versions of the technologies. Provide the salary information as {"salary": "None"} if it is not stated, or return the partial or full salary range as specified in the job description as a string: "salary": "$int - $int".  Return as JSON
     Here is an example of what the data produced could look like:
-    {"apply": "true", "tech_stack": ['language', 'language', 'framework', ...], "salary": "$140,000 - $190,000"}
+    {"apply": "True", "tech_stack": ['language', 'language', 'framework', ...], "salary": "$140,000 - $190,000"}
     """
 
     for job in jobs:
@@ -39,6 +34,7 @@ def request_GPT(jobs):
         try:
             res = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo-1106",
+                response_format={ "type": "json_object" },
                 messages=messages,
                 temperature=0.5,
                 # made token used per request
