@@ -49,7 +49,7 @@ def getURL():
     record_number = extract_number(initial_response)
     previous_set_size = 0
     no_change_counter = 0
-    max_no_change = 3  # Adjust based on your preference
+    max_no_change = 2
 
     # Logic to break out of the scrape when it reaches the end of the table
     while len(PROCESSED_URLS) < record_number:
