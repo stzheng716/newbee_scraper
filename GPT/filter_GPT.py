@@ -95,19 +95,3 @@ def request_GPT(jobs):
     print("Total Token Count >>> ", TOKENS)
     print("ERRORS >>> ", ERRORS)
 
-
-{"apply": "True",
- "salary": NULL,
- "location": NULL,
- "department": NULL,
- "tech_stack": NULL
- "SoftwareArchitecture",
- "DistributedSystems",
- "OperatingSystems",
- "ComputerVision",
- "DeepLearning",
- "OpenCV",
- "Sklearn",
- "Numpy",
- "Tensorflow",
- "Torch", "Keras", "Mxnet"]}
