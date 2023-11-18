@@ -1,3 +1,4 @@
+from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 from app import DEV, app
 from database_utils.models import JobBoards, JobPostings
@@ -67,9 +68,34 @@ def extract_number(html_content: str) -> int:
         return number
 
     return 2000  # Return 2000 if the div element was not found
+def extract_ats_domain(url):
+    """extracts the domain from an url
+
+    params:
+    - a url string
+
+    returns:
+    - the domain portion of a url
+
+    ex:
+    "https://www.example.com/path/to/page" -> "example.com"
+
+    """
+    # Parse the URL
+    parsed_url = urlparse(url)
+
+    # Get the hostname (domain) portion from the parsed URL
+    domain = parsed_url.hostname
+
+    # Check if the domain starts with "www." and remove it if present
+    if domain and domain.startswith("www."):
+        domain = domain[4:]  # Remove "www."
+
+    return domain
 
 def extract_and_save(response, url_set):
     """Extracts and saves URLs from a selenium scrape
+    - Creates a three piece tuple and appends it to the url_set
 
     Parameters:
     - selenium page source
@@ -97,7 +123,8 @@ def extract_and_save(response, url_set):
             jobs_link = row.find(
                 attrs={"data-columnindex": "2"}).a.get("href") if jobs_link_guard else ""
 
-            company_info = (company_name_no_commas, jobs_link)
+            ats_url = extract_ats_domain(jobs_link)
+            company_info = (company_name_no_commas, jobs_link, ats_url)
 
             url_set.add(company_info)
         return url_set
