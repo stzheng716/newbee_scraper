@@ -57,6 +57,7 @@ def scrape_ashby_job_board(url, company_name, test=False):
 
 
         # Check if the title indicates a software engineering or related role
+        # This is purposely designed to scrape more jobs than we want
         for keyword in KEYWORDS:
             if re.search(r'\b%s\b' % (keyword), job_title, re.I):
                 job_data = {"job_title": job_title,

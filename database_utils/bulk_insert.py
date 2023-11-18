@@ -40,7 +40,7 @@ table_name = 'job_boards'
 columns = ('company_name', 'careers_url')
 
 def extract_domain(url):
-    """extracts the domain from an url
+    """extracts the domain from a url
 
     params:
     - a url string

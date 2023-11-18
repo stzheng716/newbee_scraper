@@ -13,5 +13,8 @@ def insert_company(data):
     cur.execute("INSERT INTO crawler VALUES(?, ?)", data)
     con.commit() 
 
-
+def insert_job(data):
+    """inserts a single job into the crawler sqlite database"""
+    cur.execute("INSERT INTO crawler VALUES(?, ?)", data)
+    con.commit() 
 

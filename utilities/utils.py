@@ -68,7 +68,6 @@ def extract_number(html_content: str) -> int:
 
     return 2000  # Return 2000 if the div element was not found
 
-
 def extract_and_save(response, url_set):
     """Extracts and saves URLs from a selenium scrape
 
@@ -127,12 +126,14 @@ def sql_url_query():
 def insert_jobs(jobs):
     """take list of dictionaries and insert into the main postgres database"""
 
+    default_json_response = {"salary": None, "location": None, "department": None, "tech_stack": None}
+
     for row in jobs:
         job_title = row["job_title"]
         company_name = row["company_name"]
         job_id = row["job_id"]
         job_url = row["job_url"]
-        json_response = row["json_response"]
+        json_response = row.get("json_response", default_json_response)
 
         insert_query = f"""
             INSERT INTO job_postings (job_title, company_name, job_id, job_url, json_response)
