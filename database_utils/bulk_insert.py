@@ -1,21 +1,15 @@
 """script to bulk insert the result of a query into the main database"""
+import traceback
 import psycopg2
 import os
 from urllib.parse import urlparse
 from dotenv import load_dotenv
 from app import DEV
-import sqlite3
-sq3_con = sqlite3.connect("job_boards.db")
-sq3_cur = sq3_con.cursor()
 
 load_dotenv()
 
 # connect to the local database directly for the insert
 # conn = psycopg2.connect(database=os.environ["DATABASE_NAME"])
-
-# connect to the AWS database directly for the insert
-# TODO: dry up this code by combining with utils.py
-# QUESTION: Why do we need to make another connection to the DB via psycopg when we've already established it in the app.py? 
 
 # Double checks DEV environment var and connects to appropriate DB
 def db_connect(DEV):
@@ -31,55 +25,45 @@ def db_connect(DEV):
             host=os.environ["AWS_DATABASE_URL_EP"]
         )
 
-conn = db_connect(DEV)
-conn.autocommit = True
-cursor = conn.cursor()
-
-# table structures to update
-table_name = 'job_boards'
-columns = ('company_name', 'careers_url')
-
-def extract_domain(url):
-    """extracts the domain from an url
-
-    params:
-    - a url string
-
-    returns:
-    - the domain portion of a url
-
-    ex:
-    "https://www.example.com/path/to/page" -> "example.com"
-
-    """
-    # Parse the URL
-    parsed_url = urlparse(url)
-
-    # Get the hostname (domain) portion from the parsed URL
-    domain = parsed_url.hostname
-
-    # Check if the domain starts with "www." and remove it if present
-    if domain and domain.startswith("www."):
-        domain = domain[4:]  # Remove "www."
-
-    return domain
-
-
-# pull all of the data from the crawler temporary database
-crawler_data = sq3_cur.execute("SELECT * FROM crawler")
-
 # iterate across all of the rows in crawler data, inserting them as we go
-for row in crawler_data.fetchall():
-    company_name = row[0]
-    careers_url = row[1]
-    ats_url = extract_domain(careers_url)
+def bulk_insert_job_boards(data):
+    conn = db_connect(DEV)
+    conn.autocommit = True
+    cursor = conn.cursor()
+    with conn.cursor() as cursor:
+        insert_query = """
+                INSERT INTO job_boards (company_name, careers_url, ats_url)
+                VALUES (%s, %s, %s)
+                ON CONFLICT (company_name) DO NOTHING;
+                """
+        try:
+            cursor.executemany(insert_query, data)
+            conn.commit()
+            conn.close()
+        except psycopg2.DatabaseError as e:
+            conn.rollback()
+            print(f"Database error: {e}")
 
-    insert_query = f"""
-            INSERT INTO {table_name} (company_name, careers_url, ats_url)
-            VALUES (%s, %s, %s)
-            ON CONFLICT (company_name) DO NOTHING;
-            """
-    cursor.execute(insert_query, (company_name, careers_url, ats_url))
+def bulk_insert_job_postings(jobs):
+    """take list of dictionaries and insert into the main postgres database"""
+    flat_jobs = [job for sublist in jobs for job in sublist]
+    insert_query = """
+        INSERT INTO job_postings (job_title, company_name, job_id, job_url, json_response)
+        VALUES (%s, %s, %s, %s, %s::jsonb)
+        ON CONFLICT (job_id) DO NOTHING;
+        """
+    try:
+        conn = db_connect(DEV)
+        conn.autocommit = True
+        cursor = conn.cursor()
+        cursor.executemany(insert_query, flat_jobs)
+        conn.commit()
+    except psycopg2.DatabaseError as e:
+        conn.rollback()
+        print(f"Database error: {e}")
+    finally:
+        conn.close()
 
-conn.commit
-conn.close()
+insert_query = """
+INSERT INTO job_postings (job_description) 
+WHERE job_id = %s
