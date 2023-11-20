@@ -150,9 +150,6 @@ def sql_url_query():
     return ats_dict
 
 
-
-
-
 def insert_GPT_response(response_json, id):
     """Performs lookup of id in job_posting - inserts GPT object into JSON_response field
     Maintains data already saved into the json_response field"""
@@ -183,31 +180,6 @@ def sql_job_posting_query():
                 JobPostings.job_url.like(f"%{ats}%")).all()
 
     return job_posting_list
-
-
-def insert_jd_to_db(jd, job_id):
-
-    update_query = f"""
-        UPDATE job_postings
-        SET job_description = %s
-        WHERE job_id = %s;
-        """
-
-    try:
-        # Execute the update query
-        cursor.execute(update_query, (jd, job_id))
-        # If the update is successful, commit the transaction
-        cursor.connection.commit()
-    except psycopg2.Error as e:
-        # Rollback the transaction on error
-        cursor.connection.rollback()
-        print(f"An error occurred: {e}")
-        # Optionally, re-raise the exception if you want it to bubble up
-        raise e
-    except Exception as e:
-        # Handle other exceptions
-        print(f"A non-psycopg2 error occurred: {e}")
-        raise e
 
 
 def select_US_roles_entry():
