@@ -99,4 +99,5 @@ def request_GPT(jobs):
             global ERRORS;
             ERRORS.append({"job_URL": job[2], "error":e})
             print (ERRORS)
-        
+    print("Total Token Count >>> ", TOKENS)
+    print("ERRORS >>> ", ERRORS)
