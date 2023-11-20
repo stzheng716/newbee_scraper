@@ -72,7 +72,6 @@ def bulk_insert_jds(job_desc):
         SET job_description = %s
         WHERE job_id = %s;
         """
-
     try:
         conn = db_connect(DEV)
         conn.autocommit = True
