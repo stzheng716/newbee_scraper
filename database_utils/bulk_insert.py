@@ -63,3 +63,7 @@ def bulk_insert_job_postings(jobs):
         print(f"Database error: {e}")
     finally:
         conn.close()
+
+insert_query = """
+INSERT INTO job_postings (job_description) 
+WHERE job_id = %s

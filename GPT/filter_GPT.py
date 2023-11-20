@@ -21,7 +21,7 @@ def request_GPT(jobs):
 
     That said - there's some string-fu happening to clean the GPT responses up before converting them to Python dicts. 
     """
-
+    # TODO: Consider adding "Step 1", "Step 2", "Step 3", etc to the prompt.  
     initial_prompt = """You are a job filter bot that evaluates job descriptions to extract and return technology requirements and salary information in a JSON format. Respond with a decision to apply based on the specified criteria and include the identified technology stack and salary information. Your response should follow these guidelines:
     Issue {"apply": "True"} if the job requires 3 years of experience or less, and there is no explicit degree requirement.
     Issue {"apply": "False"} if the job requires more than 3 years of experience or explicitly states that a Bachelors, Masters, or PhD degree is necessary.
