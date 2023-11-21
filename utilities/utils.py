@@ -236,6 +236,30 @@ def select_applicable_jobs():
     cursor.execute(select_query)
     return cursor.fetchall()
 
+def flatten_tuple_list(jobs):
+    flat_jobs = [job for sublist in jobs for job in sublist]
+    return flat_jobs
+
+def get_all_job_ids():
+
+    select_query = '''SELECT job_id FROM job_postings'''
+
+    cursor.execute(select_query)
+    return cursor.fetchall()
+
+def identify_inactive_jobs(scraped_jobs, db_job_id):
+    '''compare two list and returns list that appears on second 
+    list and not on first list
+    scraped job_id = scraped_jobs[2]
+    '''
+
+    scraped_jobs_id = [job[2] for job in scraped_jobs]
+    delete_set = set(db_job_id) - set(scraped_jobs_id)
+
+    delete_list = [*delete_set]
+
+    return delete_list
+
 def get_tech_stack():
     select_query = '''SELECT (json_response ->> 'tech_stack')
             FROM job_postings

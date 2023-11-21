@@ -7,7 +7,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
-from database_utils.bulk_insert import bulk_insert_job_boards
+from database_utils.db_CRUD import bulk_insert_job_boards
 from utilities.utils import extract_number, extract_and_save
 from database_utils.sqlite_db import insert_company
 
