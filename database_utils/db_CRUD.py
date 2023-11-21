@@ -27,9 +27,13 @@ def db_connect(DEV):
             host=os.environ["AWS_DATABASE_URL_EP"]
         )
 
+# iterate across all of the rows in crawler data, inserting them as we go
+
 
 def bulk_insert_job_boards(data):
-  """Takes in list of tuples, executemany bulk insert"""
+    conn = db_connect(DEV)
+    conn.autocommit = True
+    cursor = conn.cursor()
     with conn.cursor() as cursor:
         insert_query = """
                 INSERT INTO job_boards (company_name, careers_url, ats_url)
@@ -37,21 +41,16 @@ def bulk_insert_job_boards(data):
                 ON CONFLICT (company_name) DO NOTHING;
                 """
         try:
-            conn = db_connect(DEV)
-            conn.autocommit = True
-            cursor = conn.cursor()
             cursor.executemany(insert_query, data)
             conn.commit()
+            conn.close()
         except psycopg2.DatabaseError as e:
             conn.rollback()
             print(f"Database error: {e}")
-        finally:
-            conn.close()
 
-            
+
 def bulk_insert_job_postings(jobs):
-  """Takes in list of tuples, executemany bulk insert"""
-    flat_jobs = [job for sublist in jobs for job in sublist]
+    """take list of dictionaries and insert into the main postgres database"""
     insert_query = """
         INSERT INTO job_postings (job_title, company_name, job_id, job_url, json_response)
         VALUES (%s, %s, %s, %s, %s::jsonb)
@@ -61,7 +60,7 @@ def bulk_insert_job_postings(jobs):
         conn = db_connect(DEV)
         conn.autocommit = True
         cursor = conn.cursor()
-        cursor.executemany(insert_query, flat_jobs)
+        cursor.executemany(insert_query, jobs)
         conn.commit()
     except psycopg2.DatabaseError as e:
         conn.rollback()
@@ -71,7 +70,7 @@ def bulk_insert_job_postings(jobs):
 
 
 def bulk_insert_jds(job_desc):
-  """Takes in list of tuples, executemany bulk insert"""
+
     update_query = f"""
         UPDATE job_postings
         SET job_description = %s
@@ -101,7 +100,9 @@ def bulk_insert_jds(job_desc):
 
 
 def bulk_insert_GPT_response(GPT_resp):
-  """Takes in list of tuples, executemany bulk insert"""
+    """Performs lookup of id in job_posting - inserts GPT object into JSON_response field
+    Maintains data already saved into the json_response field"""
+
     insert_query = """
         UPDATE job_postings
         SET json_response = (
@@ -118,6 +119,37 @@ def bulk_insert_GPT_response(GPT_resp):
         conn.commit()
         # Execute the update query
         cursor.executemany(insert_query, (GPT_resp))
+        # If the update is successful, commit the transaction
+        cursor.connection.commit()
+    except psycopg2.Error as e:
+        # Rollback the transaction on error
+        cursor.connection.rollback()
+        print(f"An error occurred: {e}")
+        # Optionally, re-raise the exception if you want it to bubble up
+        raise e
+    except Exception as e:
+        # Handle other exceptions
+        print(f"A non-psycopg2 error occurred: {e}")
+        raise e
+    finally:
+        conn.close()
+
+def remove_jobs_by_ids(inactive_jobs):
+    '''takes in a list of job ids and then bulk removes jobs from the database 
+    from job_postings table 
+    '''
+
+    delete_query = """
+        DELETE FROM job_postings
+        WHERE job_id = %s; """
+    
+    try:
+        conn = db_connect(DEV)
+        conn.autocommit = True
+        cursor = conn.cursor()
+        conn.commit()
+        # Execute the update query
+        cursor.executemany(delete_query, (inactive_jobs))
         # If the update is successful, commit the transaction
         cursor.connection.commit()
     except psycopg2.Error as e:
