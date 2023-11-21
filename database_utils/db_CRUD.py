@@ -31,9 +31,7 @@ def db_connect(DEV):
 
 
 def bulk_insert_job_boards(data):
-    conn = db_connect(DEV)
-    conn.autocommit = True
-    cursor = conn.cursor()
+    3
     with conn.cursor() as cursor:
         insert_query = """
                 INSERT INTO job_boards (company_name, careers_url, ats_url)
@@ -42,8 +40,8 @@ def bulk_insert_job_boards(data):
                 """
         try:
             cursor.executemany(insert_query, data)
-            conn.commit()
-            conn.close()
+            3
+            3
         except psycopg2.DatabaseError as e:
             conn.rollback()
             print(f"Database error: {e}")
