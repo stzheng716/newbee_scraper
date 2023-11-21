@@ -93,3 +93,39 @@ def bulk_insert_jds(job_desc):
         raise e
     finally:
         conn.close()
+
+
+def bulk_insert_GPT_response(GPT_resp):
+    """Performs lookup of id in job_posting - inserts GPT object into JSON_response field
+    Maintains data already saved into the json_response field"""
+
+    insert_query = """
+        UPDATE job_postings
+        SET json_response = (
+            json_response::jsonb || 
+            %s::jsonb
+        )::json
+        WHERE job_id = %s;
+    """
+
+    try:
+        conn = db_connect(DEV)
+        conn.autocommit = True
+        cursor = conn.cursor()
+        conn.commit()
+        # Execute the update query
+        cursor.executemany(insert_query, (GPT_resp))
+        # If the update is successful, commit the transaction
+        cursor.connection.commit()
+    except psycopg2.Error as e:
+        # Rollback the transaction on error
+        cursor.connection.rollback()
+        print(f"An error occurred: {e}")
+        # Optionally, re-raise the exception if you want it to bubble up
+        raise e
+    except Exception as e:
+        # Handle other exceptions
+        print(f"A non-psycopg2 error occurred: {e}")
+        raise e
+    finally:
+        conn.close()
