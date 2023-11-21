@@ -86,7 +86,8 @@ class JobPostings(db.Model):
     )
 
     json_response = db.Column(
-        db.JSON
+        db.JSON,
+        default=lambda: {"salary": None, "location": None, "department": None, "tech_stack": None}
     )
 
 def connect_db(app):
