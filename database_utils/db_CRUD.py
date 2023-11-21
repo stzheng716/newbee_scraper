@@ -51,7 +51,6 @@ def bulk_insert_job_boards(data):
 
 def bulk_insert_job_postings(jobs):
     """take list of dictionaries and insert into the main postgres database"""
-    flat_jobs = [job for sublist in jobs for job in sublist]
     insert_query = """
         INSERT INTO job_postings (job_title, company_name, job_id, job_url, json_response)
         VALUES (%s, %s, %s, %s, %s::jsonb)
@@ -61,7 +60,7 @@ def bulk_insert_job_postings(jobs):
         conn = db_connect(DEV)
         conn.autocommit = True
         cursor = conn.cursor()
-        cursor.executemany(insert_query, flat_jobs)
+        cursor.executemany(insert_query, jobs)
         conn.commit()
     except psycopg2.DatabaseError as e:
         conn.rollback()
@@ -120,6 +119,37 @@ def bulk_insert_GPT_response(GPT_resp):
         conn.commit()
         # Execute the update query
         cursor.executemany(insert_query, (GPT_resp))
+        # If the update is successful, commit the transaction
+        cursor.connection.commit()
+    except psycopg2.Error as e:
+        # Rollback the transaction on error
+        cursor.connection.rollback()
+        print(f"An error occurred: {e}")
+        # Optionally, re-raise the exception if you want it to bubble up
+        raise e
+    except Exception as e:
+        # Handle other exceptions
+        print(f"A non-psycopg2 error occurred: {e}")
+        raise e
+    finally:
+        conn.close()
+
+def remove_jobs_by_ids(inactive_jobs):
+    '''takes in a list of job ids and then bulk removes jobs from the database 
+    from job_postings table 
+    '''
+
+    delete_query = """
+        DELETE FROM job_postings
+        WHERE job_id = %s; """
+    
+    try:
+        conn = db_connect(DEV)
+        conn.autocommit = True
+        cursor = conn.cursor()
+        conn.commit()
+        # Execute the update query
+        cursor.executemany(delete_query, (inactive_jobs))
         # If the update is successful, commit the transaction
         cursor.connection.commit()
     except psycopg2.Error as e:

@@ -2,7 +2,7 @@ import json
 # import webbrowser
 import openai
 from dotenv import dotenv_values
-from database_utils.bulk_insert import bulk_insert_GPT_response
+from database_utils.db_CRUD import bulk_insert_GPT_response
 from utilities.utils import select_US_roles_entry
 
 config = dotenv_values(".env")
