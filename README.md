@@ -1,4 +1,4 @@
-# test_job_scraper
+# newbee_scraper
 
 ### Running the project locally
 1. clone the repo<br>
