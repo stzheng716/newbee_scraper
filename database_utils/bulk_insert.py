@@ -27,8 +27,9 @@ def db_connect(DEV):
             host=os.environ["AWS_DATABASE_URL_EP"]
         )
 
-def bulk_insert_job_boards(data):
 
+def bulk_insert_job_boards(data):
+  """Takes in list of tuples, executemany bulk insert"""
     with conn.cursor() as cursor:
         insert_query = """
                 INSERT INTO job_boards (company_name, careers_url, ats_url)
@@ -47,10 +48,9 @@ def bulk_insert_job_boards(data):
         finally:
             conn.close()
 
-
-
+            
 def bulk_insert_job_postings(jobs):
-    """take list of dictionaries and insert into the main postgres database"""
+  """Takes in list of tuples, executemany bulk insert"""
     flat_jobs = [job for sublist in jobs for job in sublist]
     insert_query = """
         INSERT INTO job_postings (job_title, company_name, job_id, job_url, json_response)
@@ -71,7 +71,7 @@ def bulk_insert_job_postings(jobs):
 
 
 def bulk_insert_jds(job_desc):
-
+  """Takes in list of tuples, executemany bulk insert"""
     update_query = f"""
         UPDATE job_postings
         SET job_description = %s
@@ -101,9 +101,7 @@ def bulk_insert_jds(job_desc):
 
 
 def bulk_insert_GPT_response(GPT_resp):
-    """Performs lookup of id in job_posting - inserts GPT object into JSON_response field
-    Maintains data already saved into the json_response field"""
-
+  """Takes in list of tuples, executemany bulk insert"""
     insert_query = """
         UPDATE job_postings
         SET json_response = (
