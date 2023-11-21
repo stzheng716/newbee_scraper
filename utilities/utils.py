@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+from collections import Counter
+=======
+from urllib.parse import urlparse
+>>>>>>> 6253f9d6a7fa862e34587fd1d33512cfee9b84da
 from bs4 import BeautifulSoup
 from app import DEV, app
 from database_utils.models import JobBoards, JobPostings
@@ -67,10 +72,34 @@ def extract_number(html_content: str) -> int:
         return number
 
     return 2000  # Return 2000 if the div element was not found
+def extract_ats_domain(url):
+    """extracts the domain from an url
 
+    params:
+    - a url string
+
+    returns:
+    - the domain portion of a url
+
+    ex:
+    "https://www.example.com/path/to/page" -> "example.com"
+
+    """
+    # Parse the URL
+    parsed_url = urlparse(url)
+
+    # Get the hostname (domain) portion from the parsed URL
+    domain = parsed_url.hostname
+
+    # Check if the domain starts with "www." and remove it if present
+    if domain and domain.startswith("www."):
+        domain = domain[4:]  # Remove "www."
+
+    return domain
 
 def extract_and_save(response, url_set):
     """Extracts and saves URLs from a selenium scrape
+    - Creates a three piece tuple and appends it to the url_set
 
     Parameters:
     - selenium page source
@@ -98,7 +127,8 @@ def extract_and_save(response, url_set):
             jobs_link = row.find(
                 attrs={"data-columnindex": "2"}).a.get("href") if jobs_link_guard else ""
 
-            company_info = (company_name_no_commas, jobs_link)
+            ats_url = extract_ats_domain(jobs_link)
+            company_info = (company_name_no_commas, jobs_link, ats_url)
 
             url_set.add(company_info)
         return url_set
@@ -122,28 +152,6 @@ def sql_url_query():
             ats_dict[ats] = company_boards
 
     return ats_dict
-
-
-def insert_jobs(jobs):
-    """take list of dictionaries and insert into the main postgres database"""
-
-    for row in jobs:
-        job_title = row["job_title"]
-        company_name = row["company_name"]
-        job_id = row["job_id"]
-        job_url = row["job_url"]
-        json_response = row["json_response"]
-
-        insert_query = f"""
-            INSERT INTO job_postings (job_title, company_name, job_id, job_url, json_response)
-            VALUES (%s, %s, %s, %s, %s::jsonb)
-            ON CONFLICT (job_id) DO NOTHING;
-            """
-        try:
-            cursor.execute(insert_query, (job_title, company_name,
-                                          job_id, job_url, json.dumps(json_response)))
-        except:
-            continue
 
 
 def insert_GPT_response(response_json, id):
@@ -176,31 +184,6 @@ def sql_job_posting_query():
                 JobPostings.job_url.like(f"%{ats}%")).all()
 
     return job_posting_list
-
-
-def insert_jd_to_db(jd, job_id):
-
-    update_query = f"""
-        UPDATE job_postings
-        SET job_description = %s
-        WHERE job_id = %s;
-        """
-
-    try:
-        # Execute the update query
-        cursor.execute(update_query, (jd, job_id))
-        # If the update is successful, commit the transaction
-        cursor.connection.commit()
-    except psycopg2.Error as e:
-        # Rollback the transaction on error
-        cursor.connection.rollback()
-        print(f"An error occurred: {e}")
-        # Optionally, re-raise the exception if you want it to bubble up
-        raise e
-    except Exception as e:
-        # Handle other exceptions
-        print(f"A non-psycopg2 error occurred: {e}")
-        raise e
 
 
 def select_US_roles_entry():
@@ -252,3 +235,85 @@ def select_applicable_jobs():
 
     cursor.execute(select_query)
     return cursor.fetchall()
+
+def flatten_tuple_list(jobs):
+    flat_jobs = [job for sublist in jobs for job in sublist]
+    return flat_jobs
+
+def get_all_job_ids():
+
+    select_query = '''SELECT job_id FROM job_postings'''
+
+    cursor.execute(select_query)
+    return cursor.fetchall()
+
+def identify_inactive_jobs(scraped_jobs, db_job_id):
+    '''compare two list and returns list that appears on second 
+    list and not on first list
+    scraped job_id = scraped_jobs[2]
+    '''
+
+    scraped_jobs_id = [job[2] for job in scraped_jobs]
+    delete_set = set(db_job_id) - set(scraped_jobs_id)
+
+    delete_list = [*delete_set]
+
+    return delete_list
+
+def get_tech_stack():
+    select_query = '''SELECT (json_response ->> 'tech_stack')
+            FROM job_postings
+            WHERE 
+            (json_response ->> 'location') LIKE ANY (ARRAY[
+            '%Alabama%', '%AL%', '%Alaska%', '%AK%', '%Arizona%', '%AZ%', '%Arkansas%', '%AR%', '%California%', '%CA%', 
+            '%Colorado%', '%CO%', '%Connecticut%', '%CT%', '%Delaware%', '%DE%', '%Florida%', '%FL%', '%Georgia%', '%GA%', 
+            '%Hawaii%', '%HI%', '%Idaho%', '%ID%', '%Illinois%', '%IL%', '%Indiana%', '%IN%', '%Iowa%', '%IA%', '%Kansas%', 
+            '%KS%', '%Kentucky%', '%KY%', '%Louisiana%', '%LA%', '%Maine%', '%ME%', '%Maryland%', '%MD%', '%Massachusetts%', 
+            '%MA%', '%Michigan%', '%MI%', '%Minnesota%', '%MN%', '%Mississippi%', '%MS%', '%Missouri%', '%MO%', '%Montana%', 
+            '%MT%', '%Nebraska%', '%NE%', '%Nevada%', '%NV%', '%New Hampshire%', '%NH%', '%New Jersey%', '%NJ%', '%New Mexico%', 
+            '%NM%', '%New York%', '%NY%', '%North Carolina%', '%NC%', '%North Dakota%', '%ND%', '%Ohio%', '%OH%', '%Oklahoma%', 
+            '%OK%', '%Oregon%', '%OR%', '%Pennsylvania%', '%PA%', '%Rhode Island%', '%RI%', '%South Carolina%', '%SC%', 
+            '%South Dakota%', '%SD%', '%Tennessee%', '%TN%', '%Texas%', '%TX%', '%Utah%', '%UT%', '%Vermont%', '%VT%', 
+            '%Virginia%', '%VA%', '%Washington%', '%WA%', '%West Virginia%', '%WV%', '%Wisconsin%', '%WI%', '%Wyoming%', '%WY%',
+            ' Alabama', ' AL', ' Alaska', ' AK', ' Arizona', ' AZ', ' Arkansas', ' AR', 
+            ' California', ' CA', ' Colorado', ' CO', ' Connecticut', ' CT', ' Delaware', ' DE', 
+            ' Florida', ' FL', ' Georgia', ' GA', ' Hawaii', ' HI', ' Idaho', ' ID', 
+            ' Illinois', ' IL', ' Indiana', ' IN', ' Iowa', ' IA', ' Kansas', ' KS', 
+            ' Kentucky', ' KY', ' Louisiana', ' LA', ' Maine', ' ME', ' Maryland', ' MD', 
+            ' Massachusetts', ' MA', ' Michigan', ' MI', ' Minnesota', ' MN', ' Mississippi', ' MS', 
+            ' Missouri', ' MO', ' Montana', ' MT', ' Nebraska', ' NE', ' Nevada', ' NV', 
+            ' New Hampshire', ' NH', ' New Jersey', ' NJ', ' New Mexico', ' NM', ' New York', ' NY', 
+            ' North Carolina', ' NC', ' North Dakota', ' ND', ' Ohio', ' OH', ' Oklahoma', ' OK', 
+            ' Oregon', ' OR', ' Pennsylvania', ' PA', ' Rhode Island', ' RI', ' South Carolina', ' SC', 
+            ' South Dakota', ' SD', ' Tennessee', ' TN', ' Texas', ' TX', ' Utah', ' UT', 
+            ' Vermont', ' VT', ' Virginia', ' VA', ' Washington', ' WA', ' West Virginia', ' WV', 
+            ' Wisconsin', ' WI', ' Wyoming', ' WY','% US %', '% US - %', ' US', 'US ', 'US -', '%United States%', '%US%', ' United States', 'United States ', 'US',
+            'Boston', 'San Francisco', 'Mountain View', 'Remote', 'Seattle', 'Portland', 'Denver'
+            ])
+            AND (json_response ->> 'location') NOT ILIKE '%India%' AND (json_response ->> 'location') NOT ILIKE '%latin%' AND (json_response ->> 'location') NOT ILIKE '%europe%' AND (json_response ->> 'location') NOT ILIKE '%UK%' AND (json_response ->> 'location') NOT ILIKE '%mexico%' AND (json_response ->> 'location') NOT ILIKE '%paris%'
+            AND (job_title NOT ILIKE '%senior%' AND job_title NOT ILIKE '%staff%' AND job_title NOT ILIKE '%director%' AND job_title NOT ILIKE '%manager%' AND job_title NOT ILIKE '%sr.%' AND job_title NOT ILIKE '%data%' AND job_title NOT ILIKE '%head%' AND job_title NOT ILIKE '%sr %' AND job_title NOT ILIKE '%Mechanical%' AND job_title NOT ILIKE '%lead%' AND job_title NOT ILIKE '%net%' AND job_title NOT ILIKE '%Electrical%' AND job_title NOT ILIKE '%Principal%' AND job_title NOT ILIKE '%VP%' AND job_title NOT ILIKE '%Chassis%' AND job_title NOT ILIKE '%Legal%' AND job_title NOT ILIKE '%Avionics%' AND job_title NOT ILIKE '%President%')
+            AND (json_response ->> 'tech_stack') NOT ILIKE 'None'
+            AND (json_response::jsonb) ? 'apply';'''
+
+    cursor.execute(select_query)
+    return cursor.fetchall()
+
+
+def count():
+    stack_list = get_tech_stack()
+    tech_requirements = []
+    for item in stack_list:
+        for x in item:
+            for tech in json.loads(x):
+                tech_requirements.append(tech.upper())
+
+    frequency_counter = Counter(tech_requirements)
+
+    # Sort by frequency in descending order
+    sorted_domains = sorted(frequency_counter.items(), key=lambda x: x[1], reverse=True)
+
+    # Print the sorted frequencies
+    for tech, count in sorted_domains:
+        if count >= 10:
+            print(f"{tech}: {count}")
+

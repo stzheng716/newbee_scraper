@@ -7,6 +7,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
+from database_utils.db_CRUD import bulk_insert_job_boards
 from utilities.utils import extract_number, extract_and_save
 from database_utils.sqlite_db import insert_company
 
@@ -25,13 +26,14 @@ def getURL():
     - N/A
 
     Returns:
-    - hrefs.txt file: URLS to job boards, each on a new line.
+    - Inserts each URL into a local SQLite DB for bulk insert later on. 
+        This saves database queries and is more efficient (and it saves us a little money)
     '''
     driver.set_window_size(1024, 1024)
     driver.execute_script("document.body.style.zoom='25%'")
     driver.get(URL)
     try:
-        element =  WebDriverWait(driver, random.randint(2, 10)).until(EC.presence_of_element_located((By.ID, "viewContainer")))
+        element =  WebDriverWait(driver, random.randint(2, 8)).until(EC.presence_of_element_located((By.ID, "viewContainer")))
         print(element)
     except TimeoutException:
         print("Page title couldn't be found")
@@ -47,8 +49,9 @@ def getURL():
     record_number = extract_number(initial_response)
     previous_set_size = 0
     no_change_counter = 0
-    max_no_change = 3  # Adjust based on your preference
+    max_no_change = 2
 
+    # Logic to break out of the scrape when it reaches the end of the table
     while len(PROCESSED_URLS) < record_number:
         # Scroll down by 850px
         actions = ActionChains(driver)
@@ -77,9 +80,7 @@ def getURL():
 
     response = driver.page_source
 
-    for url in PROCESSED_URLS:
-        print(url)
-        insert_company(url)
+    bulk_insert_job_boards(PROCESSED_URLS)
 
     driver.quit()
 

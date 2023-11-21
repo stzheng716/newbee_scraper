@@ -1,21 +1,58 @@
-from utilities.utils import sql_url_query
-from T2.ashby_scraper import scrape_ashby_job_board
-from T2.greenhouse_scraper import scrape_greenhouse_job_board
-from T2.lever_scraper import scrape_lever_job_board
+from database_utils.db_CRUD import bulk_insert_job_postings, remove_jobs_by_ids
+from utilities.utils import sql_url_query, flatten_tuple_list, get_all_job_ids, identify_inactive_jobs
+from ashby_scraper import scrape_ashby_job_board
+from greenhouse_scraper import scrape_greenhouse_job_board
+from lever_scraper import scrape_lever_job_board
 
 def scrape_all_boards():
+    potential_jobs = []
     ats_dict = sql_url_query()
     for key in ["lever", "ashby", "greenhouse"]:
+            
         for url in ats_dict[key]:
             if key == "lever":
-                print("CoName>>", url.company_name, "URL>>>", url.careers_url )
-                scrape_lever_job_board(url.careers_url, url.company_name)
+                # print("CoName>>", url.company_name, "URL>>>", url.careers_url )
+                lever_jobs = scrape_lever_job_board(url.careers_url, url.company_name)
+                if lever_jobs:
+                    potential_jobs.append(lever_jobs)
+                else:
+                    pass
+                print(len(potential_jobs))
             elif key == "ashby":
-                print("CoName>>", url.company_name, "URL>>>", url.careers_url )
-                scrape_ashby_job_board(url.careers_url, url.company_name)
+                # print("CoName>>", url.company_name, "URL>>>", url.careers_url )
+                ashby_jobs = scrape_ashby_job_board(url.careers_url, url.company_name)
+                if ashby_jobs:
+                    potential_jobs.append(ashby_jobs)
+                else:
+                    pass
+                print(len(potential_jobs))
+                
             elif key == "greenhouse":
-                print("CoName>>", url.company_name, "URL>>>", url.careers_url )
-                scrape_greenhouse_job_board(url.careers_url, url.company_name)
+                # print("CoName>>", url.company_name, "URL>>>", url.careers_url )
+                greenhouse_jobs = scrape_greenhouse_job_board(url.careers_url, url.company_name)
+                if greenhouse_jobs:
+                    potential_jobs.append(greenhouse_jobs)
+                else:
+                    pass
+                print(len(potential_jobs))
+                
+    print("potential_jobs ", potential_jobs)
+    print(len(potential_jobs))
+
+    # combines all list to a single list of jobs scraped
+    flat_jobs = flatten_tuple_list(potential_jobs)
+
+    # get all jobs id from the database
+    db_job_ids = get_all_job_ids()
+    flat_all_jobs_id = flatten_tuple_list(db_job_ids)
+
+    #returns a list of jobs that is in database but not in recently scraped jobs
+    inactive_jobs = identify_inactive_jobs(flat_jobs, flat_all_jobs_id)
+    
+    #bulk removes a list of jobs from the data
+    remove_jobs_by_ids(inactive_jobs)
+
+    bulk_insert_job_postings(flat_jobs)
 
 scrape_all_boards()
             
