@@ -27,13 +27,8 @@ def db_connect(DEV):
             host=os.environ["AWS_DATABASE_URL_EP"]
         )
 
-# iterate across all of the rows in crawler data, inserting them as we go
-
-
 def bulk_insert_job_boards(data):
-    conn = db_connect(DEV)
-    conn.autocommit = True
-    cursor = conn.cursor()
+
     with conn.cursor() as cursor:
         insert_query = """
                 INSERT INTO job_boards (company_name, careers_url, ats_url)
@@ -41,12 +36,17 @@ def bulk_insert_job_boards(data):
                 ON CONFLICT (company_name) DO NOTHING;
                 """
         try:
+            conn = db_connect(DEV)
+            conn.autocommit = True
+            cursor = conn.cursor()
             cursor.executemany(insert_query, data)
             conn.commit()
-            conn.close()
         except psycopg2.DatabaseError as e:
             conn.rollback()
             print(f"Database error: {e}")
+        finally:
+            conn.close()
+
 
 
 def bulk_insert_job_postings(jobs):
