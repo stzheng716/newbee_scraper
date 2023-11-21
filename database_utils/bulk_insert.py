@@ -12,6 +12,8 @@ load_dotenv()
 # conn = psycopg2.connect(database=os.environ["DATABASE_NAME"])
 
 # Double checks DEV environment var and connects to appropriate DB
+
+
 def db_connect(DEV):
     if DEV:
         return psycopg2.connect(
@@ -26,6 +28,8 @@ def db_connect(DEV):
         )
 
 # iterate across all of the rows in crawler data, inserting them as we go
+
+
 def bulk_insert_job_boards(data):
     conn = db_connect(DEV)
     conn.autocommit = True
@@ -43,6 +47,7 @@ def bulk_insert_job_boards(data):
         except psycopg2.DatabaseError as e:
             conn.rollback()
             print(f"Database error: {e}")
+
 
 def bulk_insert_job_postings(jobs):
     """take list of dictionaries and insert into the main postgres database"""
