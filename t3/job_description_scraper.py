@@ -1,7 +1,8 @@
 import requests
 import time
 from bs4 import BeautifulSoup
-from utilities.utils import sql_job_posting_query, insert_jd_to_db
+from utilities.utils import sql_job_posting_query
+from database_utils.bulk_insert import bulk_insert_jds
 
 def scrape_job_description(url):
     """
@@ -9,8 +10,8 @@ def scrape_job_description(url):
 
     output: the job description as text
     """
-    response = requests.get(url)
     try:
+        response = requests.get(url)
         response.raise_for_status()  # Check if the request was successful
     except (requests.HTTPError, requests.ConnectionError): 
         print("Page title couldn't be found")
@@ -32,12 +33,21 @@ def scrape_job_description(url):
         texts = [div.text for div in job_line]
         job_description = '\n'.join(texts).replace('\n', "")
 
-    print(job_description)
+    # print(job_description)
     return job_description
 
 
-def run_tier_3_scrape():
+def aggregate_job_descriptions():
+    job_descriptions = []
     for job in sql_job_posting_query():
         jd_text = scrape_job_description(job.job_url).strip()
-        insert_jd_to_db(jd_text, job.job_id)
+        job_descriptions.append((jd_text, job.job_id))
+        print(len(job_descriptions))
         time.sleep(0.25)
+    return job_descriptions
+
+def scrape_n_save():
+    jobs = aggregate_job_descriptions()
+    bulk_insert_jds(jobs)
+
+scrape_n_save()
