@@ -1,8 +1,8 @@
 from database_utils.db_CRUD import bulk_insert_job_postings, remove_jobs_by_ids
 from utilities.utils import sql_url_query, flatten_tuple_list, get_all_job_ids, identify_inactive_jobs
-from ashby_scraper import scrape_ashby_job_board
-from greenhouse_scraper import scrape_greenhouse_job_board
-from lever_scraper import scrape_lever_job_board
+from t2.ashby_scraper import scrape_ashby_job_board
+from t2.greenhouse_scraper import scrape_greenhouse_job_board
+from t2.lever_scraper import scrape_lever_job_board
 
 def scrape_all_boards():
     """ """
