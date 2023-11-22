@@ -28,6 +28,7 @@ def bulk_insert_job_postings(jobs):
     try:
         cursor.executemany(insert_query, jobs)
         conn.commit()
+        print("success! t2")
     except psycopg2.DatabaseError as e:
         conn.rollback()
         print(f"Database error: {e}")
@@ -48,6 +49,8 @@ def bulk_insert_jds(job_desc):
         cursor.executemany(update_query, (job_desc))
         # If the update is successful, commit the transaction
         cursor.connection.commit()
+        print("success! t3 jds")
+
     except psycopg2.Error as e:
         # Rollback the transaction on error
         cursor.connection.rollback()
@@ -81,6 +84,8 @@ def bulk_insert_GPT_response(GPT_resp):
         cursor.executemany(insert_query, (GPT_resp))
         # If the update is successful, commit the transaction
         cursor.connection.commit()
+        print("success! GPT responses")
+
     except psycopg2.Error as e:
         # Rollback the transaction on error
         cursor.connection.rollback()
@@ -111,6 +116,8 @@ def remove_jobs_by_ids(inactive_jobs):
 
             # If the update is successful, commit the transaction
             cursor.connection.commit()
+            print("success! remove old")
+
         except psycopg2.Error as e:
             # Rollback the transaction on error
             cursor.connection.rollback()

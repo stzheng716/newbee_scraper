@@ -13,29 +13,29 @@ def scrape_all_boards():
             lever_jobs = scrape_lever_job_board(job[2], job[1])
             if lever_jobs:
                 potential_jobs.append(lever_jobs)
+                print("t2 scrape jobs count lever", len(potential_jobs))
             else:
                 pass
-            print(len(potential_jobs))
         elif job[3] == "jobs.ashbyhq.com":
             # print("CoName>>", job[1], "URL>>>", job[2] )
             ashby_jobs = scrape_ashby_job_board(job[2], job[1])
             if ashby_jobs:
                 potential_jobs.append(ashby_jobs)
+                print("t2 scrape jobs count ashby", len(potential_jobs))
             else:
                 pass
-            print(len(potential_jobs))
             
         elif job[3] == "boards.greenhouse.io":
             # print("CoName>>", job[1], "URL>>>", job[2] )
             greenhouse_jobs = scrape_greenhouse_job_board(job[2], job[1])
             if greenhouse_jobs:
                 potential_jobs.append(greenhouse_jobs)
+                print("t2 scrape jobs count greenhouse", len(potential_jobs))
             else:
                 pass
-            print(len(potential_jobs))
                 
     print("potential_jobs ", potential_jobs)
-    print(len(potential_jobs))
+    print("TOTAL t2 scrape jobs count", len(potential_jobs))
 
     # combines all list to a single list of jobs scraped
     flat_jobs = flatten_tuple_list(potential_jobs)

@@ -7,8 +7,7 @@ def run_scrapers():
     getURL()
     scrape_all_boards()
     scrape_n_save()
-    
     jobs = select_US_roles_entry()
     request_GPT(jobs)
-
+    
 run_scrapers()
