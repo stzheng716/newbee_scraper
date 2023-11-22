@@ -31,8 +31,8 @@ def bulk_insert_job_postings(jobs):
     except psycopg2.DatabaseError as e:
         conn.rollback()
         print(f"Database error: {e}")
-    finally:
-        conn.close()
+    # finally:
+    #     conn.close()
 
 
 def bulk_insert_jds(job_desc):
@@ -58,8 +58,8 @@ def bulk_insert_jds(job_desc):
         # Handle other exceptions
         print(f"A non-psycopg2 error occurred: {e}")
         raise e
-    finally:
-        conn.close()
+    # finally:
+    #     conn.close()
 
 
 def bulk_insert_GPT_response(GPT_resp):
@@ -98,26 +98,26 @@ def remove_jobs_by_ids(inactive_jobs):
     '''takes in a list of job ids and then bulk removes jobs from the database 
     from job_postings table 
     '''
+    print("INACTIVE JOB>>>", inactive_jobs)
 
     delete_query = """
         DELETE FROM job_postings
         WHERE job_id = %s; """
     
-    try:
-        conn.commit()
-        # Execute the update query
-        cursor.executemany(delete_query, (inactive_jobs))
-        # If the update is successful, commit the transaction
-        cursor.connection.commit()
-    except psycopg2.Error as e:
-        # Rollback the transaction on error
-        cursor.connection.rollback()
-        print(f"An error occurred: {e}")
-        # Optionally, re-raise the exception if you want it to bubble up
-        raise e
-    except Exception as e:
-        # Handle other exceptions
-        print(f"A non-psycopg2 error occurred: {e}")
-        raise e
-    finally:
-        conn.close()
+    if inactive_jobs:
+        try:
+            conn.commit()
+            # Execute the update query
+            cursor.executemany(delete_query, [inactive_jobs])
+            # If the update is successful, commit the transaction
+            cursor.connection.commit()
+        except psycopg2.Error as e:
+            # Rollback the transaction on error
+            cursor.connection.rollback()
+            print(f"An error occurred: {e}")
+            # Optionally, re-raise the exception if you want it to bubble up
+            raise e
+        except Exception as e:
+            # Handle other exceptions
+            print(f"A non-psycopg2 error occurred: {e}")
+            raise e
