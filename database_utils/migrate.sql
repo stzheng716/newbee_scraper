@@ -25,14 +25,13 @@ SET default_table_access_method = heap;
 --
 
 CREATE TABLE public.job_boards (
-    id integer NOT NULL,
+    id SERIAL PRIMARY KEY,
     company_name character varying(250) DEFAULT 'requires research'::character varying NOT NULL,
     careers_url text NOT NULL,
     ats_url character varying(50) NOT NULL,
-    career_date_scraped timestamp without time zone DEFAULT now() NOT NULL
+    career_date_scraped timestamp without time zone DEFAULT now() NOT NULL,
+    UNIQUE (company_name)
 );
-
-
 
 --
 -- Name: job_postings; Type: TABLE; Schema: public; 
@@ -44,9 +43,10 @@ CREATE TABLE public.job_postings (
     job_url text NOT NULL,
     job_id character varying NOT NULL,
     job_scraped_date timestamp without time zone DEFAULT now() NOT NULL,
-    company_name character varying NOT NULL,
+    company_name character varying NOT NULL REFERENCES public.job_boards(company_name) ON DELETE CASCADE,
     job_description text,
     json_response json
+    UNIQUE (job_id)
 );
 
 CREATE INDEX job_id_index ON public.job_postings (job_id);

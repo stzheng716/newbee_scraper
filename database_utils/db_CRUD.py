@@ -1,21 +1,26 @@
 """script to bulk insert the result of a query into the main database"""
+import breakpoint()
 import psycopg2
 from app import conn
 cursor = conn.cursor()
 
 
 def bulk_insert_job_boards(data):
-    with conn.cursor() as cursor:
-        insert_query = """
-                INSERT INTO job_boards (company_name, careers_url, ats_url)
-                VALUES (%s, %s, %s)
-                ON CONFLICT (company_name) DO NOTHING;
-                """
-        try:
-            cursor.executemany(insert_query, data)
-        except psycopg2.DatabaseError as e:
-            conn.rollback()
-            print(f"Database error: {e}")
+    insert_query = """
+            INSERT INTO job_boards (company_name, careers_url, ats_url)
+            VALUES (%s, %s, %s)
+            ON CONFLICT (company_name) DO NOTHING;
+            """
+    try:
+        cursor.executemany(insert_query, data)
+    except psycopg2.DatabaseError as e:
+        conn.rollback()
+        print(f"Database error: {e}")
+        breakpoint()
+    except Exception as e:
+        print(f"A non-psycopg2 error occurred in t1 insert: {e}")
+        breakpoint()
+        raise e
 
 
 def bulk_insert_job_postings(jobs):
@@ -31,9 +36,12 @@ def bulk_insert_job_postings(jobs):
         print("success! t2")
     except psycopg2.DatabaseError as e:
         conn.rollback()
-        print(f"Database error: {e}")
-    # finally:
-    #     conn.close()
+        print(f"Database error job_posting insert: {e}")
+        breakpoint()
+    except Exception as e:
+        print(f"A non-psycopg2 error occurred in job_posting insert: {e}")
+        breakpoint()
+        raise e
 
 
 def bulk_insert_jds(job_desc):
@@ -45,24 +53,23 @@ def bulk_insert_jds(job_desc):
         """
     try:
         conn.commit()
-        # Execute the update query
         cursor.executemany(update_query, (job_desc))
-        # If the update is successful, commit the transaction
         cursor.connection.commit()
         print("success! t3 jds")
 
     except psycopg2.Error as e:
-        # Rollback the transaction on error
         cursor.connection.rollback()
-        print(f"An error occurred: {e}")
-        # Optionally, re-raise the exception if you want it to bubble up
+        print(f"An error occurred in JD insert: {e}")
+        breakpoint()
         raise e
+
     except Exception as e:
         # Handle other exceptions
-        print(f"A non-psycopg2 error occurred: {e}")
+        print(f"A non-psycopg2 error occurred in JD insert: {e}")
+        breakpoint()
         raise e
-    # finally:
-    #     conn.close()
+
+
 
 
 def bulk_insert_GPT_response(GPT_resp):
@@ -89,13 +96,17 @@ def bulk_insert_GPT_response(GPT_resp):
     except psycopg2.Error as e:
         # Rollback the transaction on error
         cursor.connection.rollback()
-        print(f"An error occurred: {e}")
+        print(f"An error occurred on GPT insert: {e}")
         # Optionally, re-raise the exception if you want it to bubble up
         raise e
+        breakpoint()
+
     except Exception as e:
         # Handle other exceptions
-        print(f"A non-psycopg2 error occurred: {e}")
+        print(f"A non-psycopg2 error occurred on GPT insert: {e}")
         raise e
+        breakpoint()
+
 
 def remove_jobs_by_ids(inactive_jobs):
     '''takes in a list of job ids and then bulk removes jobs from the database 
@@ -121,10 +132,13 @@ def remove_jobs_by_ids(inactive_jobs):
         except psycopg2.Error as e:
             # Rollback the transaction on error
             cursor.connection.rollback()
-            print(f"An error occurred: {e}")
+            print(f"An error occurred removing jobs: {e}")
             # Optionally, re-raise the exception if you want it to bubble up
             raise e
+            breakpoint()
+
         except Exception as e:
             # Handle other exceptions
-            print(f"A non-psycopg2 error occurred: {e}")
+            print(f"A non-psycopg2 error occurred removing jobs: {e}")
             raise e
+            breakpoint()

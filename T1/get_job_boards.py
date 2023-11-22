@@ -77,6 +77,7 @@ def getURL():
         if no_change_counter >= max_no_change:
             break
 
+
     response = driver.page_source
 
     bulk_insert_job_boards(processed_urls)
