@@ -9,7 +9,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from database_utils.db_CRUD import bulk_insert_job_boards
 from utilities.utils import extract_number, extract_and_save
-from database_utils.sqlite_db import insert_company
 
 # Set up Selenium
 URL = "https://airtable.com/embed/appPGrJqA2zH65k5I/shrI8dno1rMGKZM8y/tblKU0jQiyIX182uU?backgroundColor=cyan&viewControls=on"
@@ -84,4 +83,4 @@ def getURL():
 
     driver.quit()
 
-getURL()
+# getURL()
