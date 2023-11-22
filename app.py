@@ -1,20 +1,23 @@
 import os
 from dotenv import load_dotenv
-from database_utils.models import db, connect_db
+import psycopg2
 
-from flask import Flask
 DEV = True
 load_dotenv()
 
-app = Flask(__name__)
+def db_connect(DEV):
+    if DEV:
+        return psycopg2.connect(
+            dbname=os.environ["DATABASE_NAME"]
+        )
+    else:
+        return psycopg2.connect(
+            dbname=os.environ["DATABASE_URL"],
+            user=os.environ["RDS_USERNAME"],
+            password=os.environ["RDS_PW"],
+            host=os.environ["AWS_DATABASE_URL_EP"]
+        )
+conn = db_connect(DEV)
+conn.autocommit = True
+cursor = conn.cursor()
 
-database_url = os.environ['TEST_DATABASE_URL'] if DEV else os.environ["DATABASE_URL"]
-app.config['SQLALCHEMY_ECHO'] = False
-app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
-app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
-app.config['SQLALCHEMY_DATABASE_URI'] = database_url
-
-connect_db(app)
-
-with app.app_context():
-    db.create_all()

@@ -28,12 +28,12 @@ def request_GPT(jobs):
     """
     # TODO: Consider adding "Step 1", "Step 2", "Step 3", etc to the prompt.  
     initial_prompt = """You are a job filter bot that evaluates job descriptions. 
-Step 1) Assess if the job would be appropriate for a full stack developer with 0-3 years of experience, inclusive. Your response should follow these guidelines: return {\"apply\": \"True\"} if the job requires 3 years of experience or less, and there is no explicit degree requirement. If it requires the applicant is currently pursuing a degree the application is disqualified. Do not make any assumptions about degree requirements if they are not mentioned in the job description. Issue {\"apply\": \"False\"} if the job requires more than 3 years of experience or explicitly states that a Bachelors, Masters, or PhD degree is necessary. 
-Step 2) List all mentioned technologies in the job description within the \"tech_stack\" array without distinguishing between different versions of the technologies. 
-Step 3) Provide the salary information. Seek out variable "date_variable" as month, year, week, or hour depending on the provided data. Return as {\"salary\": \"See application for details.\"} if it is not stated, or return the partial or full salary range as specified in the job description as a string: \"salary\": \"$int - $int /\"date_variable\"\".  
-Step 4) Return an <80 word summary of the job description.
-Step 5) Return a \"reasoning\" of why the job is applicable or not. 
-Step 6) Return as JSON}"""
+    Step 1) Assess if the job would be appropriate for a full stack developer with 0-3 years of experience, inclusive. Your response should follow these guidelines: return {\"apply\": \"True\"} if the job requires 3 years of experience or less, and there is no explicit degree requirement. If it requires the applicant is currently pursuing a degree the application is disqualified. Do not make any assumptions about degree requirements if they are not mentioned in the job description. Issue {\"apply\": \"False\"} if the job requires more than 3 years of experience or explicitly states that a Bachelors, Masters, or PhD degree is necessary. 
+    Step 2) List all mentioned technologies in the job description within the \"tech_stack\" array without distinguishing between different versions of the technologies. 
+    Step 3) Provide the salary information. Seek out variable "date_variable" as month, year, week, or hour depending on the provided data. Return as {\"salary\": \"See application for details.\"} if it is not stated, or return the partial or full salary range as specified in the job description as a string: \"salary\": \"$int - $int /\"date_variable\"\".  
+    Step 4) Return an <80 word summary of the job description.
+    Step 5) Return a \"reasoning\" of why the job is applicable or not. 
+    Step 6) Return as JSON}"""
     count = 0
     work_slice = jobs[count : count + 20]
     errors = []
@@ -82,4 +82,4 @@ Step 6) Return as JSON}"""
         
 jobs = select_US_roles_entry()
 
-request_GPT(jobs)
+# request_GPT(jobs)

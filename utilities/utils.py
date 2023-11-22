@@ -1,50 +1,14 @@
-<<<<<<< HEAD
+from app import cursor
 from collections import Counter
-=======
 from urllib.parse import urlparse
->>>>>>> 6253f9d6a7fa862e34587fd1d33512cfee9b84da
 from bs4 import BeautifulSoup
-from app import DEV, app
-from database_utils.models import JobBoards, JobPostings
 import json
 
-import psycopg2
-import os
-from dotenv import load_dotenv
-
-load_dotenv()
-
-# connect to the local database directly for the insert
-# conn = psycopg2.connect(database=os.environ["DATABASE_NAME"])
-
-def db_connect(DEV):
-    '''Double checks DEV environment var and connects to appropriate DB
-    TODO: this shouldn't live here.
-    '''
-
-    if DEV:
-        return psycopg2.connect(
-            dbname=os.environ["DATABASE_NAME"]
-        )
-    else:
-        return psycopg2.connect(
-            dbname=os.environ["DATABASE_NAME"],
-            user=os.environ["RDS_USERNAME"],
-            password=os.environ["RDS_PW"],
-            host=os.environ["AWS_DATABASE_URL_EP"]
-        )
-
-
-conn = db_connect(DEV)
-
-conn.autocommit = True
-cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-
-""" Utility functions for extracting data from the Tier 1 MEGASCRAPE """
+""" Utility functions"""
 
 KEYWORDS = ["developer", "software engineer",
             "engineer", "software", "engineering"]
-ATS_KEYWORDS = ["ashby", "greenhouse", "lever"]
+ATS_KEYWORDS = '%(ashby|greenhouse|lever)%'
 
 # FOR TESTING
 # ATS_KEYWORDS = ["lever"]
@@ -72,6 +36,8 @@ def extract_number(html_content: str) -> int:
         return number
 
     return 2000  # Return 2000 if the div element was not found
+
+
 def extract_ats_domain(url):
     """extracts the domain from an url
 
@@ -96,6 +62,7 @@ def extract_ats_domain(url):
         domain = domain[4:]  # Remove "www."
 
     return domain
+
 
 def extract_and_save(response, url_set):
     """Extracts and saves URLs from a selenium scrape
@@ -136,54 +103,40 @@ def extract_and_save(response, url_set):
 
 def sql_url_query():
     """
-    functions that returns a dictionary with list of all of the specific ats platforms
-
-    return {"lever": [{id, company_name, careers_url, ats_url, career_date_scraped} ,{}]
-        ,"greenhouse": [{}{}],
-        "ashby":[{},{}]}
+    returns list of ATS sites we've written scrapers for as tuples
+    Output: [(1319, 'iCapital', 'https://boards.greenhouse.io/icapitalnetwork',
+            'boards.greenhouse.io', datetime.datetime(2023, 11, 18, 0, 44, 15, 569994)),
+            (1320, 'Covariant', 'https://jobs.lever.co/covariant/',
+            'jobs.lever.co', datetime.datetime(2023, 11, 18, 0, 44, 15, 570120)),
+            ...]
     """
-
-    ats_dict = {}
-
-    with app.app_context():
-        for ats in ATS_KEYWORDS:
-            company_boards = JobBoards.query.filter(
-                JobBoards.careers_url.like(f"%{ats}%")).all()
-            ats_dict[ats] = company_boards
-
-    return ats_dict
-
-
-def insert_GPT_response(response_json, id):
-    """Performs lookup of id in job_posting - inserts GPT object into JSON_response field
-    Maintains data already saved into the json_response field"""
 
     insert_query = """
-        UPDATE job_postings
-        SET json_response = (
-            json_response::jsonb || 
-            %s::jsonb
-        )::json
-        WHERE job_id = %s;
-    """
-    cursor.execute(insert_query, (json.dumps(response_json), id))
+                SELECT * FROM job_boards 
+                WHERE careers_url SIMILAR TO %s;
+            """
+
+    cursor.execute(insert_query, [ATS_KEYWORDS])
+    return cursor.fetchall()
 
 
 def sql_job_posting_query():
     """
-    functions that returns a dictionary with list of all of the specific ats platforms with a list of job postings
-
-    return [{job_postings}]
+    returns list of job_postings that match ATS_KEYWORDS as Tuples
+    Output: [('https://jobs.lever.co/voltus/552ab97b-414d-4b54-83ce-b353f8196a5c',
+            '552ab97b-414d-4b54-83ce-b353f8196a5c'),
+            ('https://jobs.lever.co/voltus/d858d25b-47f2-4ecc-8b9a-3b44549c6087',
+            'd858d25b-47f2-4ecc-8b9a-3b44549c6087'),
+            ...]
     """
 
-    job_posting_list = []
+    insert_query = """
+            SELECT job_url, job_id FROM job_postings 
+            WHERE job_url SIMILAR TO %s;
+        """
 
-    with app.app_context():
-        for ats in ATS_KEYWORDS:
-            job_posting_list += JobPostings.query.filter(
-                JobPostings.job_url.like(f"%{ats}%")).all()
-
-    return job_posting_list
+    cursor.execute(insert_query, [ATS_KEYWORDS])
+    return cursor.fetchall()
 
 
 def select_US_roles_entry():
@@ -236,9 +189,11 @@ def select_applicable_jobs():
     cursor.execute(select_query)
     return cursor.fetchall()
 
+
 def flatten_tuple_list(jobs):
     flat_jobs = [job for sublist in jobs for job in sublist]
     return flat_jobs
+
 
 def get_all_job_ids():
 
@@ -246,6 +201,7 @@ def get_all_job_ids():
 
     cursor.execute(select_query)
     return cursor.fetchall()
+
 
 def identify_inactive_jobs(scraped_jobs, db_job_id):
     '''compare two list and returns list that appears on second 
@@ -259,6 +215,7 @@ def identify_inactive_jobs(scraped_jobs, db_job_id):
     delete_list = [*delete_set]
 
     return delete_list
+
 
 def get_tech_stack():
     select_query = '''SELECT (json_response ->> 'tech_stack')
@@ -310,10 +267,10 @@ def count():
     frequency_counter = Counter(tech_requirements)
 
     # Sort by frequency in descending order
-    sorted_domains = sorted(frequency_counter.items(), key=lambda x: x[1], reverse=True)
+    sorted_domains = sorted(frequency_counter.items(),
+                            key=lambda x: x[1], reverse=True)
 
     # Print the sorted frequencies
     for tech, count in sorted_domains:
         if count >= 10:
             print(f"{tech}: {count}")
-
