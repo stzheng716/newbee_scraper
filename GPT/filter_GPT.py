@@ -48,7 +48,7 @@ def request_GPT(jobs):
                         {"role": "user", "content": job[6]}]
             try:
                 res = openai.ChatCompletion.create(
-                    model="ft:gpt-3.5-turbo-1106:personal::8M0ktJe9",
+                    model="gpt-3.5-turbo-1106",
                     response_format={ "type": "json_object" },
                     messages=messages,
                     temperature=0.5,

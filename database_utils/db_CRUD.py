@@ -91,8 +91,6 @@ def bulk_insert_GPT_response(GPT_resp):
         # Handle other exceptions
         print(f"A non-psycopg2 error occurred: {e}")
         raise e
-    finally:
-        conn.close()
 
 def remove_jobs_by_ids(inactive_jobs):
     '''takes in a list of job ids and then bulk removes jobs from the database 
@@ -108,7 +106,7 @@ def remove_jobs_by_ids(inactive_jobs):
         try:
             conn.commit()
             # Execute the update query
-            cursor.executemany(delete_query, [inactive_jobs])
+            cursor.executemany(delete_query, [[job_id] for job_id in inactive_jobs])
             # If the update is successful, commit the transaction
             cursor.connection.commit()
         except psycopg2.Error as e:
