@@ -5,7 +5,6 @@ from t2.greenhouse_scraper import scrape_greenhouse_job_board
 from t2.lever_scraper import scrape_lever_job_board
 
 def scrape_all_boards():
-    """ """
     potential_jobs = []
     jobs = sql_url_query()
     for job in jobs:
