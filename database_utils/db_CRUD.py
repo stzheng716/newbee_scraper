@@ -106,7 +106,9 @@ def remove_jobs_by_ids(inactive_jobs):
         try:
             conn.commit()
             # Execute the update query
+
             cursor.executemany(delete_query, [[job_id] for job_id in inactive_jobs])
+
             # If the update is successful, commit the transaction
             cursor.connection.commit()
         except psycopg2.Error as e:
