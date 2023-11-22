@@ -25,106 +25,28 @@ SET default_table_access_method = heap;
 --
 
 CREATE TABLE public.job_boards (
-    id integer NOT NULL,
+    id SERIAL PRIMARY KEY,
     company_name character varying(250) DEFAULT 'requires research'::character varying NOT NULL,
     careers_url text NOT NULL,
     ats_url character varying(50) NOT NULL,
-    career_date_scraped timestamp without time zone DEFAULT now() NOT NULL
+    career_date_scraped timestamp without time zone DEFAULT now() NOT NULL,
+    UNIQUE (company_name)
 );
-
-
---
--- Name: job_boards_id_seq; Type: SEQUENCE; Schema: public; 
---
-
-CREATE SEQUENCE public.job_boards_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-
---
--- Name: job_boards_id_seq; Type: SEQUENCE OWNED BY; Schema: public; 
---
-
-ALTER SEQUENCE public.job_boards_id_seq OWNED BY public.job_boards.id;
-
 
 --
 -- Name: job_postings; Type: TABLE; Schema: public; 
 --
 
 CREATE TABLE public.job_postings (
-    id integer NOT NULL,
+    id SERIAL PRIMARY KEY,
     job_title character varying,
     job_url text NOT NULL,
     job_id character varying NOT NULL,
     job_scraped_date timestamp without time zone DEFAULT now() NOT NULL,
-    company_name character varying NOT NULL,
+    company_name character varying NOT NULL REFERENCES public.job_boards(company_name) ON DELETE CASCADE,
     job_description text,
-    json_response json
+    json_response json,
+    UNIQUE (job_id)
 );
 
-
---
--- Name: job_postings_id_seq; Type: SEQUENCE; Schema: public; 
---
-
-CREATE SEQUENCE public.job_postings_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.job_boards_id_seq OWNER TO michael;
-
---
--- Name: job_boards_id_seq; Type: SEQUENCE OWNED BY; Schema: public; 
---
-
-ALTER SEQUENCE public.job_boards_id_seq OWNED BY public.job_boards.id;
-
-
---
--- Name: job_postings; Type: TABLE; Schema: public; 
---
-
-CREATE TABLE public.job_postings (
-    id integer NOT NULL,
-    job_title character varying,
-    job_url text NOT NULL,
-    job_id character varying NOT NULL,
-    job_scraped_date timestamp without time zone DEFAULT now() NOT NULL,
-    company_name character varying NOT NULL,
-    job_description text,
-    json_response json
-);
-
-
-ALTER TABLE public.job_postings OWNER TO michael;
-
---
--- Name: job_postings_id_seq; Type: SEQUENCE; Schema: public; 
---
-
-CREATE SEQUENCE public.job_postings_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: job_postings_id_seq; Type: SEQUENCE OWNED BY; Schema: public; 
---
-
-ALTER SEQUENCE public.job_postings_id_seq OWNED BY public.job_postings.id;
+CREATE INDEX job_id_index ON public.job_postings (job_id);
