@@ -8,7 +8,7 @@ import json
 
 KEYWORDS = ["developer", "software engineer",
             "engineer", "software", "engineering"]
-ATS_KEYWORDS = ['ashby', 'greenhouse', 'lever']
+ATS_KEYWORDS = '%(ashby|greenhouse|lever)%'
 
 # FOR TESTING
 # ATS_KEYWORDS = ["lever"]
@@ -36,6 +36,8 @@ def extract_number(html_content: str) -> int:
         return number
 
     return 2000  # Return 2000 if the div element was not found
+
+
 def extract_ats_domain(url):
     """extracts the domain from an url
 
@@ -60,6 +62,7 @@ def extract_ats_domain(url):
         domain = domain[4:]  # Remove "www."
 
     return domain
+
 
 def extract_and_save(response, url_set):
     """Extracts and saves URLs from a selenium scrape
@@ -100,23 +103,21 @@ def extract_and_save(response, url_set):
 
 def sql_url_query():
     """
-    functions that returns a dictionary with list of all of the specific ats platforms
-
-    return {"lever": [{id, company_name, careers_url, ats_url, career_date_scraped} ,{}]
-        ,"greenhouse": [{}{}],
-        "ashby":[{},{}]}
+    returns list of ATS sites we've written scrapers for as tuples
+    Output: [(1319, 'iCapital', 'https://boards.greenhouse.io/icapitalnetwork',
+            'boards.greenhouse.io', datetime.datetime(2023, 11, 18, 0, 44, 15, 569994)),
+            (1320, 'Covariant', 'https://jobs.lever.co/covariant/',
+            'jobs.lever.co', datetime.datetime(2023, 11, 18, 0, 44, 15, 570120)),
+            ...]
     """
 
-    ats_dict = {}
-
     insert_query = """
-            SELECT * from job_boards 
-            WHERE ats_url ILIKE '%\lever%';
+                SELECT * FROM job_boards 
+                WHERE careers_url SIMILAR TO %s;
             """
 
-    cursor.execute(insert_query)
+    cursor.execute(insert_query, [ATS_KEYWORDS])
     return cursor.fetchall()
-    return ats_dict
 
 
 # def sql_job_posting_query():
@@ -186,9 +187,11 @@ def select_applicable_jobs():
     cursor.execute(select_query)
     return cursor.fetchall()
 
+
 def flatten_tuple_list(jobs):
     flat_jobs = [job for sublist in jobs for job in sublist]
     return flat_jobs
+
 
 def get_all_job_ids():
 
@@ -196,6 +199,7 @@ def get_all_job_ids():
 
     cursor.execute(select_query)
     return cursor.fetchall()
+
 
 def identify_inactive_jobs(scraped_jobs, db_job_id):
     '''compare two list and returns list that appears on second 
@@ -209,6 +213,7 @@ def identify_inactive_jobs(scraped_jobs, db_job_id):
     delete_list = [*delete_set]
 
     return delete_list
+
 
 def get_tech_stack():
     select_query = '''SELECT (json_response ->> 'tech_stack')
@@ -260,10 +265,10 @@ def count():
     frequency_counter = Counter(tech_requirements)
 
     # Sort by frequency in descending order
-    sorted_domains = sorted(frequency_counter.items(), key=lambda x: x[1], reverse=True)
+    sorted_domains = sorted(frequency_counter.items(),
+                            key=lambda x: x[1], reverse=True)
 
     # Print the sorted frequencies
     for tech, count in sorted_domains:
         if count >= 10:
             print(f"{tech}: {count}")
-
