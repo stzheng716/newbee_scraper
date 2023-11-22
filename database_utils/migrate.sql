@@ -38,14 +38,14 @@ CREATE TABLE public.job_boards (
 --
 
 CREATE TABLE public.job_postings (
-    id integer NOT NULL,
+    id SERIAL PRIMARY KEY,
     job_title character varying,
     job_url text NOT NULL,
     job_id character varying NOT NULL,
     job_scraped_date timestamp without time zone DEFAULT now() NOT NULL,
     company_name character varying NOT NULL REFERENCES public.job_boards(company_name) ON DELETE CASCADE,
     job_description text,
-    json_response json
+    json_response json,
     UNIQUE (job_id)
 );
 

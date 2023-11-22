@@ -1,5 +1,4 @@
 """script to bulk insert the result of a query into the main database"""
-import breakpoint()
 import psycopg2
 from app import conn
 cursor = conn.cursor()
@@ -16,10 +15,8 @@ def bulk_insert_job_boards(data):
     except psycopg2.DatabaseError as e:
         conn.rollback()
         print(f"Database error: {e}")
-        breakpoint()
     except Exception as e:
         print(f"A non-psycopg2 error occurred in t1 insert: {e}")
-        breakpoint()
         raise e
 
 
@@ -37,10 +34,8 @@ def bulk_insert_job_postings(jobs):
     except psycopg2.DatabaseError as e:
         conn.rollback()
         print(f"Database error job_posting insert: {e}")
-        breakpoint()
     except Exception as e:
         print(f"A non-psycopg2 error occurred in job_posting insert: {e}")
-        breakpoint()
         raise e
 
 
@@ -60,13 +55,11 @@ def bulk_insert_jds(job_desc):
     except psycopg2.Error as e:
         cursor.connection.rollback()
         print(f"An error occurred in JD insert: {e}")
-        breakpoint()
         raise e
 
     except Exception as e:
         # Handle other exceptions
         print(f"A non-psycopg2 error occurred in JD insert: {e}")
-        breakpoint()
         raise e
 
 
@@ -99,13 +92,11 @@ def bulk_insert_GPT_response(GPT_resp):
         print(f"An error occurred on GPT insert: {e}")
         # Optionally, re-raise the exception if you want it to bubble up
         raise e
-        breakpoint()
 
     except Exception as e:
         # Handle other exceptions
         print(f"A non-psycopg2 error occurred on GPT insert: {e}")
         raise e
-        breakpoint()
 
 
 def remove_jobs_by_ids(inactive_jobs):
@@ -135,10 +126,8 @@ def remove_jobs_by_ids(inactive_jobs):
             print(f"An error occurred removing jobs: {e}")
             # Optionally, re-raise the exception if you want it to bubble up
             raise e
-            breakpoint()
 
         except Exception as e:
             # Handle other exceptions
             print(f"A non-psycopg2 error occurred removing jobs: {e}")
             raise e
-            breakpoint()
