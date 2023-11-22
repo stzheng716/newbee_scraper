@@ -40,8 +40,8 @@ def scrape_job_description(url):
 def aggregate_job_descriptions():
     job_descriptions = []
     for job in sql_job_posting_query():
-        jd_text = scrape_job_description(job.job_url).strip()
-        job_descriptions.append((jd_text, job.job_id))
+        jd_text = scrape_job_description(job[0]).strip()
+        job_descriptions.append((jd_text, job[1]))
         print(len(job_descriptions))
         time.sleep(0.25)
     return job_descriptions
@@ -50,4 +50,4 @@ def scrape_n_save():
     jobs = aggregate_job_descriptions()
     bulk_insert_jds(jobs)
 
-scrape_n_save()
+# scrape_n_save()

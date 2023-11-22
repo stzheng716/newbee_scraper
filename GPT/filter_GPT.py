@@ -82,4 +82,4 @@ def request_GPT(jobs):
         
 jobs = select_US_roles_entry()
 
-request_GPT(jobs)
+# request_GPT(jobs)

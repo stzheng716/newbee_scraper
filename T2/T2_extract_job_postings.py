@@ -53,5 +53,5 @@ def scrape_all_boards():
 
     bulk_insert_job_postings(flat_jobs)
 
-scrape_all_boards()
+# scrape_all_boards()
             

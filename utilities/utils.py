@@ -120,21 +120,23 @@ def sql_url_query():
     return cursor.fetchall()
 
 
-# def sql_job_posting_query():
-#     """
-#     functions that returns a dictionary with list of all of the specific ats platforms with a list of job postings
+def sql_job_posting_query():
+    """
+    returns list of job_postings that match ATS_KEYWORDS as Tuples
+    Output: [('https://jobs.lever.co/voltus/552ab97b-414d-4b54-83ce-b353f8196a5c',
+            '552ab97b-414d-4b54-83ce-b353f8196a5c'),
+            ('https://jobs.lever.co/voltus/d858d25b-47f2-4ecc-8b9a-3b44549c6087',
+            'd858d25b-47f2-4ecc-8b9a-3b44549c6087'),
+            ...]
+    """
 
-#     return [{job_postings}]
-#     """
+    insert_query = """
+            SELECT job_url, job_id FROM job_postings 
+            WHERE job_url SIMILAR TO %s;
+        """
 
-#     job_posting_list = []
-
-#     with app.app_context():
-#         for ats in ATS_KEYWORDS:
-#             job_posting_list += JobPostings.query.filter(
-#                 JobPostings.job_url.like(f"%{ats}%")).all()
-
-#     return job_posting_list
+    cursor.execute(insert_query, [ATS_KEYWORDS])
+    return cursor.fetchall()
 
 
 def select_US_roles_entry():
