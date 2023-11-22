@@ -1,8 +1,8 @@
-"""script to bulk insert the result of a query into the main database"""
 import psycopg2
 from app import conn
 cursor = conn.cursor()
-
+"""This script contains functions that are used during the web scrapes and with
+GPT to handle inserting, deleting, or updating rows in our tables"""
 
 def bulk_insert_job_boards(data):
     insert_query = """
@@ -14,7 +14,7 @@ def bulk_insert_job_boards(data):
         cursor.executemany(insert_query, data)
     except psycopg2.DatabaseError as e:
         conn.rollback()
-        print(f"Database error: {e}")
+        print(f"Database error in t1 insert: {e}")
     except Exception as e:
         print(f"A non-psycopg2 error occurred in t1 insert: {e}")
         raise e
@@ -33,9 +33,9 @@ def bulk_insert_job_postings(jobs):
         print("success! t2")
     except psycopg2.DatabaseError as e:
         conn.rollback()
-        print(f"Database error job_posting insert: {e}")
+        print(f"Database error t2 insert: {e}")
     except Exception as e:
-        print(f"A non-psycopg2 error occurred in job_posting insert: {e}")
+        print(f"A non-psycopg2 error occurred in t2 insert: {e}")
         raise e
 
 
@@ -54,12 +54,12 @@ def bulk_insert_jds(job_desc):
 
     except psycopg2.Error as e:
         cursor.connection.rollback()
-        print(f"An error occurred in JD insert: {e}")
+        print(f"An error occurred in t3 JD insert: {e}")
         raise e
 
     except Exception as e:
         # Handle other exceptions
-        print(f"A non-psycopg2 error occurred in JD insert: {e}")
+        print(f"A non-psycopg2 error occurred in t3 JD insert: {e}")
         raise e
 
 

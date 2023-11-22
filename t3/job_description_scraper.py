@@ -2,7 +2,7 @@ import requests
 import time
 from bs4 import BeautifulSoup
 from utilities.utils import select_US_roles_matching_ATS
-from database_utils.db_CRUD import bulk_insert_jds
+from database_utils.db_bulk_data_utils import bulk_insert_jds
 
 def scrape_job_description(url):
     """
