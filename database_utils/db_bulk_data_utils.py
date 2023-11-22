@@ -1,21 +1,23 @@
-"""script to bulk insert the result of a query into the main database"""
 import psycopg2
 from app import conn
 cursor = conn.cursor()
-
+"""This script contains functions that are used during the web scrapes and with
+GPT to handle inserting, deleting, or updating rows in our tables"""
 
 def bulk_insert_job_boards(data):
-    with conn.cursor() as cursor:
-        insert_query = """
-                INSERT INTO job_boards (company_name, careers_url, ats_url)
-                VALUES (%s, %s, %s)
-                ON CONFLICT (company_name) DO NOTHING;
-                """
-        try:
-            cursor.executemany(insert_query, data)
-        except psycopg2.DatabaseError as e:
-            conn.rollback()
-            print(f"Database error: {e}")
+    insert_query = """
+            INSERT INTO job_boards (company_name, careers_url, ats_url)
+            VALUES (%s, %s, %s)
+            ON CONFLICT (company_name) DO NOTHING;
+            """
+    try:
+        cursor.executemany(insert_query, data)
+    except psycopg2.DatabaseError as e:
+        conn.rollback()
+        print(f"Database error in t1 insert: {e}")
+    except Exception as e:
+        print(f"A non-psycopg2 error occurred in t1 insert: {e}")
+        raise e
 
 
 def bulk_insert_job_postings(jobs):
@@ -28,11 +30,13 @@ def bulk_insert_job_postings(jobs):
     try:
         cursor.executemany(insert_query, jobs)
         conn.commit()
+        print("success! t2")
     except psycopg2.DatabaseError as e:
         conn.rollback()
-        print(f"Database error: {e}")
-    # finally:
-    #     conn.close()
+        print(f"Database error t2 insert: {e}")
+    except Exception as e:
+        print(f"A non-psycopg2 error occurred in t2 insert: {e}")
+        raise e
 
 
 def bulk_insert_jds(job_desc):
@@ -44,22 +48,21 @@ def bulk_insert_jds(job_desc):
         """
     try:
         conn.commit()
-        # Execute the update query
         cursor.executemany(update_query, (job_desc))
-        # If the update is successful, commit the transaction
         cursor.connection.commit()
+        print("success! t3 jds")
+
     except psycopg2.Error as e:
-        # Rollback the transaction on error
         cursor.connection.rollback()
-        print(f"An error occurred: {e}")
-        # Optionally, re-raise the exception if you want it to bubble up
+        print(f"An error occurred in t3 JD insert: {e}")
         raise e
+
     except Exception as e:
         # Handle other exceptions
-        print(f"A non-psycopg2 error occurred: {e}")
+        print(f"A non-psycopg2 error occurred in t3 JD insert: {e}")
         raise e
-    # finally:
-    #     conn.close()
+
+
 
 
 def bulk_insert_GPT_response(GPT_resp):
@@ -81,16 +84,20 @@ def bulk_insert_GPT_response(GPT_resp):
         cursor.executemany(insert_query, (GPT_resp))
         # If the update is successful, commit the transaction
         cursor.connection.commit()
+        print("success! GPT responses")
+
     except psycopg2.Error as e:
         # Rollback the transaction on error
         cursor.connection.rollback()
-        print(f"An error occurred: {e}")
+        print(f"An error occurred on GPT insert: {e}")
         # Optionally, re-raise the exception if you want it to bubble up
         raise e
+
     except Exception as e:
         # Handle other exceptions
-        print(f"A non-psycopg2 error occurred: {e}")
+        print(f"A non-psycopg2 error occurred on GPT insert: {e}")
         raise e
+
 
 def remove_jobs_by_ids(inactive_jobs):
     '''takes in a list of job ids and then bulk removes jobs from the database 
@@ -111,13 +118,16 @@ def remove_jobs_by_ids(inactive_jobs):
 
             # If the update is successful, commit the transaction
             cursor.connection.commit()
+            print("success! remove old")
+
         except psycopg2.Error as e:
             # Rollback the transaction on error
             cursor.connection.rollback()
-            print(f"An error occurred: {e}")
+            print(f"An error occurred removing jobs: {e}")
             # Optionally, re-raise the exception if you want it to bubble up
             raise e
+
         except Exception as e:
             # Handle other exceptions
-            print(f"A non-psycopg2 error occurred: {e}")
+            print(f"A non-psycopg2 error occurred removing jobs: {e}")
             raise e

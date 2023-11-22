@@ -7,7 +7,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
-from database_utils.db_CRUD import bulk_insert_job_boards
+from database_utils.db_bulk_data_utils import bulk_insert_job_boards
 from utilities.utils import extract_number, extract_and_save
 
 # Set up Selenium
@@ -15,9 +15,9 @@ URL = "https://airtable.com/embed/appPGrJqA2zH65k5I/shrI8dno1rMGKZM8y/tblKU0jQiy
 options = webdriver.ChromeOptions()
 options.add_argument("--headless=new")
 driver = webdriver.Chrome(options=options)
-PROCESSED_URLS = set()
 
 def getURL():
+    processed_urls = set()
     '''Tier 1: The First Scrape
     Extracts URLs from the defined global URL variable.
 
@@ -39,9 +39,8 @@ def getURL():
         pass
 
     initial_response = driver.page_source
-    print("INITIAL RESPONSE", type(initial_response))
-    global PROCESSED_URLS
-    extract_and_save(initial_response, PROCESSED_URLS)
+    # print("INITIAL RESPONSE", type(initial_response))
+    extract_and_save(initial_response, processed_urls)
     scrollable_div = driver.find_element(By.CSS_SELECTOR, ".scrollOverlay.antiscroll-wrap")
 
     # Variables used for breaking out of the while loop
@@ -51,7 +50,7 @@ def getURL():
     max_no_change = 2
 
     # Logic to break out of the scrape when it reaches the end of the table
-    while len(PROCESSED_URLS) < record_number:
+    while len(processed_urls) < record_number:
         # Scroll down by 850px
         actions = ActionChains(driver)
         actions.move_to_element(scrollable_div).click().send_keys(Keys.PAGE_DOWN).perform()
@@ -61,25 +60,27 @@ def getURL():
 
         # Get the updated page source after scroll
         response = driver.page_source
-        PROCESSED_URLS = extract_and_save(response, PROCESSED_URLS)
-        print ("PROCESSED_URLS >>>>>",PROCESSED_URLS)
+        processed_urls = extract_and_save(response, processed_urls)
+        # print ("processed_urls >>>>>",processed_urls)
 
         # Check if we're at the bottom of the page
-        if len(PROCESSED_URLS) == previous_set_size:
+        if len(processed_urls) == previous_set_size:
             no_change_counter += 1
         else:
             no_change_counter = 0
 
         # Update the previous set size
-        previous_set_size = len(PROCESSED_URLS)
+        previous_set_size = len(processed_urls)
+        print("t1 get job boards urls processed: ", len(processed_urls))
 
         # Break if we've tried to get new data multiple times without success
         if no_change_counter >= max_no_change:
             break
 
+
     response = driver.page_source
 
-    bulk_insert_job_boards(PROCESSED_URLS)
+    bulk_insert_job_boards(processed_urls)
 
     driver.quit()
 
