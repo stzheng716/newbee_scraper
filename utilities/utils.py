@@ -1,50 +1,14 @@
-<<<<<<< HEAD
+from app import cursor
 from collections import Counter
-=======
 from urllib.parse import urlparse
->>>>>>> 6253f9d6a7fa862e34587fd1d33512cfee9b84da
 from bs4 import BeautifulSoup
-from app import DEV, app
-from database_utils.models import JobBoards, JobPostings
 import json
 
-import psycopg2
-import os
-from dotenv import load_dotenv
-
-load_dotenv()
-
-# connect to the local database directly for the insert
-# conn = psycopg2.connect(database=os.environ["DATABASE_NAME"])
-
-def db_connect(DEV):
-    '''Double checks DEV environment var and connects to appropriate DB
-    TODO: this shouldn't live here.
-    '''
-
-    if DEV:
-        return psycopg2.connect(
-            dbname=os.environ["DATABASE_NAME"]
-        )
-    else:
-        return psycopg2.connect(
-            dbname=os.environ["DATABASE_NAME"],
-            user=os.environ["RDS_USERNAME"],
-            password=os.environ["RDS_PW"],
-            host=os.environ["AWS_DATABASE_URL_EP"]
-        )
-
-
-conn = db_connect(DEV)
-
-conn.autocommit = True
-cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-
-""" Utility functions for extracting data from the Tier 1 MEGASCRAPE """
+""" Utility functions"""
 
 KEYWORDS = ["developer", "software engineer",
             "engineer", "software", "engineering"]
-ATS_KEYWORDS = ["ashby", "greenhouse", "lever"]
+ATS_KEYWORDS = ['ashby', 'greenhouse', 'lever']
 
 # FOR TESTING
 # ATS_KEYWORDS = ["lever"]
@@ -145,45 +109,31 @@ def sql_url_query():
 
     ats_dict = {}
 
-    with app.app_context():
-        for ats in ATS_KEYWORDS:
-            company_boards = JobBoards.query.filter(
-                JobBoards.careers_url.like(f"%{ats}%")).all()
-            ats_dict[ats] = company_boards
+    insert_query = """
+            SELECT * from job_boards 
+            WHERE ats_url ILIKE '%\lever%';
+            """
 
+    cursor.execute(insert_query)
+    return cursor.fetchall()
     return ats_dict
 
 
-def insert_GPT_response(response_json, id):
-    """Performs lookup of id in job_posting - inserts GPT object into JSON_response field
-    Maintains data already saved into the json_response field"""
+# def sql_job_posting_query():
+#     """
+#     functions that returns a dictionary with list of all of the specific ats platforms with a list of job postings
 
-    insert_query = """
-        UPDATE job_postings
-        SET json_response = (
-            json_response::jsonb || 
-            %s::jsonb
-        )::json
-        WHERE job_id = %s;
-    """
-    cursor.execute(insert_query, (json.dumps(response_json), id))
+#     return [{job_postings}]
+#     """
 
+#     job_posting_list = []
 
-def sql_job_posting_query():
-    """
-    functions that returns a dictionary with list of all of the specific ats platforms with a list of job postings
+#     with app.app_context():
+#         for ats in ATS_KEYWORDS:
+#             job_posting_list += JobPostings.query.filter(
+#                 JobPostings.job_url.like(f"%{ats}%")).all()
 
-    return [{job_postings}]
-    """
-
-    job_posting_list = []
-
-    with app.app_context():
-        for ats in ATS_KEYWORDS:
-            job_posting_list += JobPostings.query.filter(
-                JobPostings.job_url.like(f"%{ats}%")).all()
-
-    return job_posting_list
+#     return job_posting_list
 
 
 def select_US_roles_entry():
