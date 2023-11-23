@@ -44,7 +44,6 @@ def scrape_job_description(url):
 
 def aggregate_job_descriptions():
     job_descriptions = []
-    print(select_unblessed_US_roles_matching_ats())
     for job in select_unblessed_US_roles_matching_ats():
         jd_text = scrape_job_description(job[0]).strip()
         job_descriptions.append((jd_text, job[1]))
