@@ -104,7 +104,7 @@ def extract_and_save(response, url_set):
         return url_set
 
 
-def sql_url_query():
+def sql_job_board_query_ats():
     """
     returns list of ATS sites we've written scrapers for as tuples
     Output: [(1319, 'iCapital', 'https://boards.greenhouse.io/icapitalnetwork',
@@ -123,7 +123,7 @@ def sql_url_query():
     return cursor.fetchall()
 
 
-def sql_job_posting_query():
+def sql_job_posting_query_ats():
     """
     returns list of job_postings that match ATS_KEYWORDS as Tuples
     Output: [('https://jobs.lever.co/voltus/552ab97b-414d-4b54-83ce-b353f8196a5c',
@@ -142,7 +142,7 @@ def sql_job_posting_query():
     return cursor.fetchall()
 
 
-def select_US_roles_entry():
+def select_all_unblessed_US_roles_entry():
     """returns db query of all jobs matching the below filters:
         - location
         - title
@@ -187,7 +187,7 @@ def select_US_roles_entry():
     cursor.execute(select_query)
     return cursor.fetchall()
 
-def select_US_roles_matching_ATS():
+def select_unblessed_US_roles_matching_ats():
     """returns list of job_postings that match ATS_KEYWORDS as Tuples, in US, 
     Match title exclusions, and match location exclusions
 
