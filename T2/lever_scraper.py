@@ -55,10 +55,10 @@ def scrape_lever_job_board(url, company_name, test=False):
                                 job_id,
                                 job_url,
                                 json.dumps({
-                                    "location": location,
-                                    "department": department,
-                                    "salary": None, 
-                                    "tech_stack": None
+                                    "location": location or "",
+                                    "department": department or "",
+                                    "salary": "", 
+                                    "tech_stack": []
                                     })
                     )
                     potential_jobs.append(job_data)
