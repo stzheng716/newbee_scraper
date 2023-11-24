@@ -51,10 +51,10 @@ def scrape_greenhouse_job_board(url, company_name, test=False):
                                 job_id,
                                 job_url,
                                 json.dumps({
-                                    "location": location or None,
-                                    "department": None,
-                                    "salary": None, 
-                                    "tech_stack": None
+                                    "location": location or "",
+                                    "department": "",
+                                    "salary": "", 
+                                    "tech_stack": []
                                     })
                     )
                     potential_jobs.append(job_data)
