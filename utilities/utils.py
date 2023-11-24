@@ -182,14 +182,16 @@ def select_all_unblessed_US_roles_entry():
         ])
         AND (json_response ->> 'location') NOT ILIKE '%India%' AND (json_response ->> 'location') NOT ILIKE '%latin%' AND (json_response ->> 'location') NOT ILIKE '%europe%' AND (json_response ->> 'location') NOT ILIKE '%UK%' AND (json_response ->> 'location') NOT ILIKE '%mexico%' AND (json_response ->> 'location') NOT ILIKE '%paris%'
         AND (job_title NOT ILIKE '%senior%' AND job_title NOT ILIKE '%staff%' AND job_title NOT ILIKE '%director%' AND job_title NOT ILIKE '%manager%' AND job_title NOT ILIKE '%sr.%' AND job_title NOT ILIKE '%data%' AND job_title NOT ILIKE '%head%' AND job_title NOT ILIKE '%sr %' AND job_title NOT ILIKE '%Mechanical%' AND job_title NOT ILIKE '%lead%' AND job_title NOT ILIKE '%net%' AND job_title NOT ILIKE '%Electrical%' AND job_title NOT ILIKE '%Principal%' AND job_title NOT ILIKE '%VP%' AND job_title NOT ILIKE '%Chassis%' AND job_title NOT ILIKE '%Legal%' AND job_title NOT ILIKE '%Avionics%' AND job_title NOT ILIKE '%President%')
-        AND NOT (json_response::jsonb) ? 'apply';
+        AND NOT (json_response::jsonb) ? 'apply'
+        AND job_url SIMILAR TO '{ATS_KEYWORDS};
     """
     cursor.execute(select_query)
     return cursor.fetchall()
 
-def select_unblessed_US_roles_matching_ats():
+def select_unblessed_US_roles_matching_ats_for_job_descriptions():
     """returns list of job_postings that match ATS_KEYWORDS as Tuples, in US, 
-    Match title exclusions, and match location exclusions
+    Match title exclusions, and match location exclusions.
+    Only returns job_url and job_id
 
     We designed this query to limit the job descriptions we're scraping to improve efficiency
 
@@ -331,3 +333,11 @@ def count():
     for tech, count in sorted_domains:
         if count >= 10:
             print(f"{tech}: {count}")
+
+def get_weird_jobs():
+    query = '''SELECT *
+        FROM job_postings
+        where json_response ->> 'apply' ILIKE 'true' 
+        and json_response ->> 'tech_stack' is null ;'''
+    cursor.execute(query)
+    return cursor.fetchall()
