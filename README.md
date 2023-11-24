@@ -29,13 +29,16 @@ OPEN_AI_API_KEY=[ROBOT API KEY]
 ```
 createdb job_crawler
 ```
-7. You have two options: 
+7. Update Local DB >>> You have two options: 
    
-   1. use the provided the backup data (it's old, links might not work)
+   1. Use the provided backup data (it's old, links might not work)
+      1. If you already have a database on your machine, you'll need to drop it and recreate it:
+      	2. ```dropdb job_crawler```
+        3. ```createdb job_crawler```
       1. ```psql -d job_crawler -f database_utils/backup_database.sql```
    
    
-   2. create the tables and run the scraper to get the data in realtime
+   3. create the tables and run the scraper to get the data in realtime
       1. ```psql -d job_crawler -f database_utils/migrate.sql``` 
       2. run full_scrape.py: ```python full_scrape.py```
 
