@@ -335,9 +335,13 @@ def count():
             print(f"{tech}: {count}")
 
 def get_weird_jobs():
-    query = '''SELECT *
+    query_blessed_null_tech_stack = '''SELECT *
         FROM job_postings
         where json_response ->> 'apply' ILIKE 'true' 
         and json_response ->> 'tech_stack' is null ;'''
-    cursor.execute(query)
+    query_blessed_no_tech_stack = '''SELECT * FROM job_postings 
+        WHERE (json_response::jsonb) ? 'apply' 
+        AND (json_response::jsonb) ->> 'tech_stack' LIKE '[]';'''
+    
+    cursor.execute(query_blessed_no_tech_stack)
     return cursor.fetchall()
