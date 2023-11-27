@@ -3,7 +3,7 @@ import json
 import openai
 from dotenv import dotenv_values
 from database_utils.db_bulk_data_utils import bulk_insert_GPT_response
-from utilities.utils import select_unblessed_US_roles_matching_ats
+from utilities.utils import select_all_unblessed_US_roles_entry
 
 config = dotenv_values(".env")
 openai.api_key = config["OPEN_AI_API_KEY"]
@@ -80,6 +80,7 @@ def request_GPT(jobs):
             ask_the_robot(work_slice, count, errors)
     ask_the_robot(work_slice, count, errors)
         
-jobs = select_unblessed_US_roles_matching_ats()
+jobs = select_all_unblessed_US_roles_entry()
 
 # request_GPT(jobs)
+
