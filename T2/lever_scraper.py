@@ -2,8 +2,8 @@ import json
 import requests
 from bs4 import BeautifulSoup
 import re
-from database_utils.headers import headers
-from utilities.utils import KEYWORDS
+from data.headers import headers
+from utilities.db_utils import KEYWORDS
 
 """
 Scraper for jobs on jobs.lever.io

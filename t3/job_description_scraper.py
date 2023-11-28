@@ -1,7 +1,7 @@
 import requests
 import time
 from bs4 import BeautifulSoup
-from utilities.utils import query_unblessed_US_jobs
+from utilities.db_utils import query_unblessed_US_jobs
 from utilities.db_bulk_data_utils import bulk_insert_jds
 
 
@@ -44,8 +44,9 @@ def scrape_job_description(url):
 
 def aggregate_job_descriptions():
     '''
-    This function sends the URL off to scrape_j_d() and returns a JD, 
-    then appends it to a tuple that is then added to a large list. 
+    This function sends the URL off to scrape_j_d() that returns a JD, 
+    then it appends it to a tuple with its associated job_id. 
+    That is then added to a large list. 
     The list of tuples is used to bulk insert the data into the DB
     
     returns job_descriptions = 
