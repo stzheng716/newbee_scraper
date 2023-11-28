@@ -2,7 +2,7 @@ import requests
 import time
 from bs4 import BeautifulSoup
 from utilities.utils import query_unblessed_US_jobs
-from database_utils.db_bulk_data_utils import bulk_insert_jds
+from utilities.db_bulk_data_utils import bulk_insert_jds
 
 
 def scrape_job_description(url):

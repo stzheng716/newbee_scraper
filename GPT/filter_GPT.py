@@ -2,7 +2,7 @@ import json
 # import webbrowser
 import openai
 from dotenv import dotenv_values
-from database_utils.db_bulk_data_utils import bulk_insert_GPT_response
+from utilities.db_bulk_data_utils import bulk_insert_GPT_response
 from utilities.utils import query_unblessed_US_jobs
 
 config = dotenv_values(".env")

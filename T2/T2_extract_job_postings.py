@@ -1,5 +1,6 @@
-from database_utils.db_bulk_data_utils import bulk_insert_job_postings, remove_jobs_by_ids
-from utilities.utils import query_job_board_ats, flatten_tuple_list, query_all_job_ids, identify_inactive_jobs
+from utilities.db_bulk_data_utils import bulk_insert_job_postings, remove_jobs_by_ids
+from utilities.utils import flatten_tuple_list, identify_inactive_jobs
+from utilities.db_utils import query_job_board_ats, query_all_job_ids
 from t2.ashby_scraper import scrape_ashby_job_board
 from t2.greenhouse_scraper import scrape_greenhouse_job_board
 from t2.lever_scraper import scrape_lever_job_board
