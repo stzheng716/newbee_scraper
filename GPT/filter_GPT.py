@@ -3,7 +3,7 @@ import json
 import openai
 from dotenv import dotenv_values
 from utilities.db_bulk_data_utils import bulk_insert_GPT_response
-from utilities.utils import query_unblessed_US_jobs
+from utilities.db_utils import query_unblessed_US_jobs
 
 config = dotenv_values(".env")
 openai.api_key = config["OPEN_AI_API_KEY"]
