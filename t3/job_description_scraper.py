@@ -1,7 +1,7 @@
 import requests
 import time
 from bs4 import BeautifulSoup
-from utilities.db_utils import query_unblessed_US_jobs
+from utilities.db_utils import query_all_job_posting
 from utilities.db_bulk_data_utils import bulk_insert_jds
 
 
@@ -53,7 +53,7 @@ def aggregate_job_descriptions():
         [( 'job description string', 'job_id'), ()...]
         '''
     job_descriptions = []
-    for job in query_unblessed_US_jobs():
+    for job in query_all_job_posting():
         jd_text = scrape_job_description(job[0]).strip()
         job_descriptions.append((jd_text, job[1]))
         print("t3 job description length >>> ", len(job_descriptions))
