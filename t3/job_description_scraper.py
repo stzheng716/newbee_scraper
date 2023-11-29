@@ -1,13 +1,13 @@
 import requests
 import time
 from bs4 import BeautifulSoup
-from utilities.utils import select_unblessed_US_roles_matching_ats
-from database_utils.db_bulk_data_utils import bulk_insert_jds
+from utilities.utils import query_unblessed_US_jobs
+from utilities.db_bulk_data_utils import bulk_insert_jds
 
 
 def scrape_job_description(url):
     """
-    input a job_posting url from lever, greenhouse, or ashby
+    input a job_url from the job_postings table
 
     output: the job description as text
     """
@@ -43,8 +43,16 @@ def scrape_job_description(url):
 
 
 def aggregate_job_descriptions():
+    '''
+    This function sends the URL off to scrape_j_d() and returns a JD, 
+    then appends it to a tuple that is then added to a large list. 
+    The list of tuples is used to bulk insert the data into the DB
+    
+    returns job_descriptions = 
+        [( 'job description string', 'job_id'), ()...]
+        '''
     job_descriptions = []
-    for job in select_unblessed_US_roles_matching_ats():
+    for job in query_unblessed_US_jobs():
         jd_text = scrape_job_description(job[0]).strip()
         job_descriptions.append((jd_text, job[1]))
         print("t3 job description length >>> ", len(job_descriptions))
