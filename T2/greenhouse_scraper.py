@@ -3,7 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 import re
 from utilities.utils import KEYWORDS
-from utilities.headers import headers
+from database_utils.headers import headers
 """
 Scraper for jobs on boards.greenhouse.io
 

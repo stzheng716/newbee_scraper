@@ -9,15 +9,15 @@
 ```
 python -m venv venv
 ```
-5. activate and enter your venv<br>
+4. activate and enter your venv<br>
 ```
 source venv/bin/activate
 ```
-6. install dependencies
+5. install dependencies
 ```
 pip install -r requirements.txt
 ```
-7. create your .env file
+6. create your .env file
 ```
 SECRET_KEY=[YOUR SECRET KEY HERE] or ask someone on the team for the secret key
 DATABASE_URL=postgresql:///job_crawler
@@ -25,22 +25,19 @@ TEST_DATABASE_URL=postgresql:///job_crawler
 DATABASE_NAME=job_crawler
 OPEN_AI_API_KEY=[ROBOT API KEY]
 ```
-6. run the following commands in the terminal to create your local copy of the database
-```
-createdb job_crawler
-```
-7. Update Local DB >>> You have two options: 
-   
-   1. Use the provided backup data (it's old, links might not work)
-      1. If you already have a database on your machine, you'll need to drop it and recreate it:
-      	2. ```dropdb job_crawler```
-        3. ```createdb job_crawler```
-      1. ```psql -d job_crawler -f database_utils/backup_database.sql```
-   
-   
-   3. create the tables and run the scraper to get the data in realtime
-      1. ```psql -d job_crawler -f database_utils/migrate.sql``` 
-      2. run full_scrape.py: ```python full_scrape.py```
+
+7. Create your local job_crawler database: 
+   If you already have a job_crawler DB and want to use the backup data:
+   1. drop table, create table, import backup_database.sql:
+      	1. ```dropdb job_crawler```
+        1. ```createdb job_crawler```
+      1. ```psql -d job_crawler -f data/backup_database.sql```
+
+		or start from scratch
+   2. create the tables and run the scraper (this will take a while):
+      1. ```createdb job_crawler```
+      2. ```psql -d job_crawler -f data/migrate.sql``` 
+      3. ```python full_scrape.py```
 
 ---
 ### Project Overview:
