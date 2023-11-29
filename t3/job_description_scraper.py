@@ -1,7 +1,7 @@
 import requests
 import time
 from bs4 import BeautifulSoup
-from utilities.utils import select_unblessed_US_roles_matching_ats
+from utilities.utils import select_unblessed_US_roles_matching_ats_for_job_descriptions
 from database_utils.db_bulk_data_utils import bulk_insert_jds
 
 
