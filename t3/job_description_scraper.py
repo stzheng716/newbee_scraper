@@ -14,31 +14,29 @@ def scrape_job_description(url):
     response = None
     try:
         response = requests.get(url)
-        response.raise_for_status()  # Check if the request was successful
+        soup = BeautifulSoup(response.content, 'html.parser')
+        job_description = ""
+
+        if "greenhouse" in url:
+            content_divs = soup.find_all('div', id='content')
+            if content_divs:  # Check if the list is not empty
+                job_description = content_divs[0].text.replace(
+                    "\n", " ").strip()
+            else:
+                print("T3 >>> No div with id='content' found.")
+        elif "ashby" in url:
+            job_description = soup.find('meta', attrs={'name': 'description'}).get(
+                'content').replace("\n", "").strip()
+        elif "lever" in url:
+            job_line = soup.find_all('div', class_="section page-centered")
+            texts = [div.text for div in job_line]
+            job_description = '\n'.join(texts).replace('\n', "")
+
+        # print(job_description)
+        return job_description
     except Exception as e:
         print("t3: Error processing HTML content: ", e)
-        return "null"
-
-    soup = BeautifulSoup(response.content, 'html.parser')
-    job_description = ""
-
-    if "greenhouse" in url:
-        content_divs = soup.find_all('div', id='content')
-        if content_divs:  # Check if the list is not empty
-            job_description = content_divs[0].text.replace(
-                "\n", " ").strip()
-        else:
-            print("T3 >>> No div with id='content' found.")
-    elif "ashby" in url:
-        job_description = soup.find('meta', attrs={'name': 'description'}).get(
-            'content').replace("\n", "").strip()
-    elif "lever" in url:
-        job_line = soup.find_all('div', class_="section page-centered")
-        texts = [div.text for div in job_line]
-        job_description = '\n'.join(texts).replace('\n', "")
-
-    # print(job_description)
-    return job_description
+        return "scrape error"
 
 
 
