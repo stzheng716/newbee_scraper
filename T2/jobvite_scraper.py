@@ -2,9 +2,14 @@ from curses.ascii import isdigit
 import requests
 from bs4 import BeautifulSoup
 import re
+<<<<<<< HEAD
 from data.headers import headers
 from utilities.db_utils import KEYWORDS
 from utilities.utils import insert_jobs
+=======
+from database_utils.headers import headers
+from utilities.utils import KEYWORDS, insert_jobs
+>>>>>>> edea51dd59573c1537d4adc50d6153bea2180624
 
 BASE_URL = "https://jobs.jobvite.com"
 

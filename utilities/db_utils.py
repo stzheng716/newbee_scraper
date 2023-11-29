@@ -39,10 +39,14 @@ def query_job_board_ats():
 
 def query_all_job_posting():
     """
+<<<<<<< HEAD
     returns list of job_postings as Tuples: (job_url, job_id)
     Only returns job posting rows that do_not contain a job_description
     called in t3 scrape
     
+=======
+    returns list of job_postings that match ATS_KEYWORDS as Tuples
+>>>>>>> edea51dd59573c1537d4adc50d6153bea2180624
     Output: [('https://jobs.lever.co/voltus/552ab97b-414d-4b54-83ce-b353f8196a5c',
             '552ab97b-414d-4b54-83ce-b353f8196a5c'),
             ('https://jobs.lever.co/voltus/d858d25b-47f2-4ecc-8b9a-3b44549c6087',
