@@ -70,3 +70,6 @@ def scrape_lever_job_board(url, company_name, test=False):
     except (requests.HTTPError, requests.ConnectionError):
         print("Page title couldn't be found")
         pass
+
+
+print("job and department titles are inconsistent. We run the risk of missing jobs outside of our keywords ie: site reliability")
