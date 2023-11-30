@@ -11,16 +11,16 @@ from utilities.db_bulk_data_utils import bulk_insert_jds
 
 def scrape_with_selenium(url):
     """
-        Scrape the job description from a web page using Selenium for dynamic content.
+    Scrape the job description from a web page using Selenium for dynamic content.
 
-        This function is used as a fallback when BeautifulSoup fails to find the job description
-        due to the content being dynamically loaded via JavaScript.
+    This function is used as a fallback when BeautifulSoup fails to find the job description
+    due to the content being dynamically loaded via JavaScript.
 
-        Args:
-        url (str): The URL of the job posting.
+    Args:
+    url (str): The URL of the job posting.
 
-        Returns:
-        str: The text of the job description, or None if an error occurs.
+    Returns:
+    str: The text of the job description, or None if an error occurs.
     """
     options = webdriver.ChromeOptions()
     options.add_argument("--headless=new")
