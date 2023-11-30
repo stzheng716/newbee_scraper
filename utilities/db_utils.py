@@ -2,15 +2,15 @@ from app import cursor
 
 """Database query functions"""
 
-KEYWORDS = ["developer", "software engineer",
-            "engineer", "software", "engineering"]
-ATS_KEYWORDS = '%(ashby|greenhouse|lever)%'
+KEYWORDS = ["developer", "software engineer", "engineer", "software", "engineering"]
+ATS_KEYWORDS = "%(ashby|greenhouse|lever)%"
+
 
 def query_all_job_ids():
-    '''queries job_postings for all job_ids
-    used in comparison for removing job_postings that are no longer open'''
+    """queries job_postings for all job_ids
+    used in comparison for removing job_postings that are no longer open"""
 
-    select_query = '''SELECT job_id FROM job_postings'''
+    select_query = """SELECT job_id FROM job_postings"""
 
     cursor.execute(select_query)
     return cursor.fetchall()
@@ -108,17 +108,17 @@ def query_unblessed_US_jobs():
 
 
 def query_blessed_jobs():
-    '''Query's job_postings and returns jobs given GPT's blessing '''
+    """Query's job_postings and returns jobs given GPT's blessing"""
 
-    select_query = ''' SELECT * FROM job_postings WHERE (json_response::jsonb) ? 'apply' 
-    AND json_response ->> 'apply' ILIKE 'True';'''
+    select_query = """ SELECT * FROM job_postings WHERE (json_response::jsonb) ? 'apply' 
+    AND json_response ->> 'apply' ILIKE 'True';"""
 
     cursor.execute(select_query)
     return cursor.fetchall()
 
 
 def query_tech_stack():
-    select_query = '''SELECT (json_response ->> 'tech_stack')
+    select_query = """SELECT (json_response ->> 'tech_stack')
             FROM job_postings
             WHERE 
             (json_response ->> 'location') LIKE ANY (ARRAY[
@@ -150,24 +150,23 @@ def query_tech_stack():
             AND (json_response ->> 'location') NOT ILIKE '%India%' AND (json_response ->> 'location') NOT ILIKE '%latin%' AND (json_response ->> 'location') NOT ILIKE '%europe%' AND (json_response ->> 'location') NOT ILIKE '%UK%' AND (json_response ->> 'location') NOT ILIKE '%mexico%' AND (json_response ->> 'location') NOT ILIKE '%paris%'
             AND (job_title NOT ILIKE '%senior%' AND job_title NOT ILIKE '%staff%' AND job_title NOT ILIKE '%director%' AND job_title NOT ILIKE '%manager%' AND job_title NOT ILIKE '%sr.%' AND job_title NOT ILIKE '%data%' AND job_title NOT ILIKE '%head%' AND job_title NOT ILIKE '%sr %' AND job_title NOT ILIKE '%Mechanical%' AND job_title NOT ILIKE '%lead%' AND job_title NOT ILIKE '%net%' AND job_title NOT ILIKE '%Electrical%' AND job_title NOT ILIKE '%Principal%' AND job_title NOT ILIKE '%VP%' AND job_title NOT ILIKE '%Chassis%' AND job_title NOT ILIKE '%Legal%' AND job_title NOT ILIKE '%Avionics%' AND job_title NOT ILIKE '%President%')
             AND (json_response ->> 'tech_stack') NOT LIKE '[]'
-            AND (json_response::jsonb) ? 'apply';'''
+            AND (json_response::jsonb) ? 'apply';"""
 
     cursor.execute(select_query)
     return cursor.fetchall()
 
 
 def query_weird_jobs():
-    ''' For Testing Purposes 
+    """For Testing Purposes
     Really just saving these here so we have a reference for odd-ball queries
-    '''
-    query_blessed_null_tech_stack = '''SELECT *
+    """
+    query_blessed_null_tech_stack = """SELECT *
         FROM job_postings
         where json_response ->> 'apply' ILIKE 'true' 
-        and json_response ->> 'tech_stack' is null ;'''
-    query_blessed_no_tech_stack = '''SELECT * FROM job_postings 
+        and json_response ->> 'tech_stack' is null ;"""
+    query_blessed_no_tech_stack = """SELECT * FROM job_postings 
         WHERE (json_response::jsonb) ? 'apply' 
-        AND (json_response::jsonb) ->> 'tech_stack' LIKE '[]';'''
-    
+        AND (json_response::jsonb) ->> 'tech_stack' LIKE '[]';"""
+
     cursor.execute(query_blessed_no_tech_stack)
     return cursor.fetchall()
-

@@ -37,40 +37,39 @@ Roadblocks:
 
 """
 
+
 def scrape_jobvite_job_board(url, company_name, test=False):
     response = requests.get(url, headers=headers)
     try:
         response.raise_for_status()  # Check if the request was successful
-    except (requests.HTTPError, requests.ConnectionError): 
+    except (requests.HTTPError, requests.ConnectionError):
         print("Page title couldn't be found")
         pass
 
-    soup = BeautifulSoup(response.content, 'html.parser')
+    soup = BeautifulSoup(response.content, "html.parser")
     potential_jobs = []
 
     # Lever usually has job listings within <div> elements with a class of "posting"
-    for job_element in soup.find_all('div', class_='jv-job-item'):
-        job_title = job_element.find('a').get_text()
-        department = job_element.parent.parent.find_previous_sibling('h3').get_text()
-        job_id = job_element.find('a')['href'].split('/')[-1]
+    for job_element in soup.find_all("div", class_="jv-job-item"):
+        job_title = job_element.find("a").get_text()
+        department = job_element.parent.parent.find_previous_sibling("h3").get_text()
+        job_id = job_element.find("a")["href"].split("/")[-1]
 
-        location = job_element.find('div', class_='jv-job-list-location').get_text().strip().split(',')[0]
+        location = job_element.find("div", class_="jv-job-list-location").get_text().strip().split(",")[0]
         if isdigit(location[0]):
             location = None
 
-        job_url = BASE_URL + job_element.find('a')['href']
+        job_url = BASE_URL + job_element.find("a")["href"]
         # Check if the title indicates a software engineering or related role
         for keyword in KEYWORDS:
-            if re.search(r'\b%s\b' % (keyword), job_title, re.I):
-                job_data = {"job_title": job_title,
-                            "company_name":company_name,
-                            "job_id": job_id,
-                            "job_url": job_url,
-                            "json_response": {
-                                "location": location,
-                                "department": department
-                                }
-                            }
+            if re.search(r"\b%s\b" % (keyword), job_title, re.I):
+                job_data = {
+                    "job_title": job_title,
+                    "company_name": company_name,
+                    "job_id": job_id,
+                    "job_url": job_url,
+                    "json_response": {"location": location, "department": department},
+                }
                 potential_jobs.append(job_data)
                 break
 
@@ -78,4 +77,3 @@ def scrape_jobvite_job_board(url, company_name, test=False):
         print(potential_jobs)
     else:
         insert_jobs(potential_jobs)
-        

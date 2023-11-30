@@ -16,9 +16,10 @@ options = webdriver.ChromeOptions()
 options.add_argument("--headless=new")
 driver = webdriver.Chrome(options=options)
 
+
 def getURL():
     processed_urls = set()
-    '''Tier 1: The First Scrape
+    """Tier 1: The First Scrape
     Extracts URLs from the defined global URL variable.
 
     Parameters:
@@ -27,12 +28,14 @@ def getURL():
     Returns:
     - Inserts each URL into a local SQLite DB for bulk insert later on. 
         This saves database queries and is more efficient (and it saves us a little money)
-    '''
+    """
     driver.set_window_size(1024, 1024)
     driver.execute_script("document.body.style.zoom='25%'")
     driver.get(URL)
     try:
-        element =  WebDriverWait(driver, random.randint(2, 8)).until(EC.presence_of_element_located((By.ID, "viewContainer")))
+        element = WebDriverWait(driver, random.randint(2, 8)).until(
+            EC.presence_of_element_located((By.ID, "viewContainer"))
+        )
         print(element)
     except TimeoutException:
         print("Page title couldn't be found")
@@ -77,11 +80,11 @@ def getURL():
         if no_change_counter >= max_no_change:
             break
 
-
     response = driver.page_source
 
     bulk_insert_job_boards(processed_urls)
 
     driver.quit()
+
 
 # getURL()

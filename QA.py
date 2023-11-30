@@ -8,6 +8,7 @@ running it with test=True prints the jobs to the terminal instead of adding it
 to the DataBase. 
 """
 
+
 def test_ashby():
     ats_dict = query_job_board_ats()
     for url in ats_dict["ashby"]:
@@ -15,6 +16,7 @@ def test_ashby():
         print("CoName---->", url.company_name)
         scrape_ashby_job_board(url.careers_url, url.company_name, test=True)
         breakpoint()
+
 
 def test_greenhouse():
     ats_dict = query_job_board_ats()
@@ -24,6 +26,7 @@ def test_greenhouse():
         print("CoName---->", url.company_name)
         breakpoint()
 
+
 def test_lever():
     ats_dict = query_job_board_ats()
     for url in ats_dict["lever"]:
@@ -31,6 +34,7 @@ def test_lever():
         print("CoName---->", url.company_name)
         scrape_lever_job_board(url.careers_url, url.company_name, test=True)
         breakpoint()
+
 
 def test_all_boards():
     ats_dict = query_job_board_ats()
@@ -49,4 +53,3 @@ def test_all_boards():
                 print("CoName---->", url.company_name)
                 scrape_greenhouse_job_board(url.careers_url, url.company_name, test=True)
             breakpoint()
-

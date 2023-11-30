@@ -1,8 +1,10 @@
 import psycopg2
 from app import conn
+
 cursor = conn.cursor()
 """This script contains functions that are used during the web scrapes and with
 GPT to handle inserting, deleting, or updating rows in our tables"""
+
 
 def bulk_insert_job_boards(data):
     insert_query = """
@@ -40,7 +42,6 @@ def bulk_insert_job_postings(jobs):
 
 
 def bulk_insert_jds(job_desc):
-
     update_query = f"""
         UPDATE job_postings
         SET job_description = %s
@@ -61,8 +62,6 @@ def bulk_insert_jds(job_desc):
         # Handle other exceptions
         print(f"A non-psycopg2 error occurred in t3 JD insert: {e}")
         raise e
-
-
 
 
 def bulk_insert_GPT_response(GPT_resp):
@@ -100,15 +99,15 @@ def bulk_insert_GPT_response(GPT_resp):
 
 
 def remove_jobs_by_ids(inactive_jobs):
-    '''takes in a list of job ids and then bulk removes jobs from the database 
-    from job_postings table 
-    '''
+    """takes in a list of job ids and then bulk removes jobs from the database
+    from job_postings table
+    """
     print("INACTIVE JOB>>>", inactive_jobs)
 
     delete_query = """
         DELETE FROM job_postings
         WHERE job_id = %s; """
-    
+
     if inactive_jobs:
         try:
             conn.commit()

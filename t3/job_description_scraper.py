@@ -19,38 +19,35 @@ def scrape_job_description(url):
         print("t3: Error processing HTML content: ", e)
         return "null"
 
-    soup = BeautifulSoup(response.content, 'html.parser')
+    soup = BeautifulSoup(response.content, "html.parser")
     job_description = ""
 
     if "greenhouse" in url:
-        content_divs = soup.find_all('div', id='content')
+        content_divs = soup.find_all("div", id="content")
         if content_divs:  # Check if the list is not empty
-            job_description = content_divs[0].text.replace(
-                "\n", " ").strip()
+            job_description = content_divs[0].text.replace("\n", " ").strip()
         else:
             print("T3 >>> No div with id='content' found.")
     elif "ashby" in url:
-        job_description = soup.find('meta', attrs={'name': 'description'}).get(
-            'content').replace("\n", "").strip()
+        job_description = soup.find("meta", attrs={"name": "description"}).get("content").replace("\n", "").strip()
     elif "lever" in url:
-        job_line = soup.find_all('div', class_="section page-centered")
+        job_line = soup.find_all("div", class_="section page-centered")
         texts = [div.text for div in job_line]
-        job_description = '\n'.join(texts).replace('\n', "")
+        job_description = "\n".join(texts).replace("\n", "")
 
     # print(job_description)
     return job_description
 
 
-
 def aggregate_job_descriptions():
-    '''
-    This function sends the URL off to scrape_j_d() and returns a JD, 
-    then appends it to a tuple that is then added to a large list. 
+    """
+    This function sends the URL off to scrape_j_d() and returns a JD,
+    then appends it to a tuple that is then added to a large list.
     The list of tuples is used to bulk insert the data into the DB
-    
-    returns job_descriptions = 
+
+    returns job_descriptions =
         [( 'job description string', 'job_id'), ()...]
-        '''
+    """
     job_descriptions = []
     for job in query_unblessed_US_jobs():
         jd_text = scrape_job_description(job[0]).strip()
@@ -63,5 +60,6 @@ def aggregate_job_descriptions():
 def scrape_n_save():
     jobs = aggregate_job_descriptions()
     bulk_insert_jds(jobs)
+
 
 # scrape_n_save()
