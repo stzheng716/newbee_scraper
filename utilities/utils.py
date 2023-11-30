@@ -108,7 +108,7 @@ def flatten_tuple_list(jobs):
     return flat_jobs
 
 def identify_inactive_jobs(scraped_jobs, db_job_id):
-    '''compare two list and returns list that appears on second 
+    '''compare two list and returns list that appears on second
     list and not on first list
     scraped job_id = scraped_jobs[2]
     '''
@@ -124,7 +124,7 @@ def identify_inactive_jobs(scraped_jobs, db_job_id):
 def freq_count(data):
     '''written to return frequency each technology is mentioned in tech_stack
     of json_response'''
-    
+
     tech_requirements = []
     for item in data:
         for x in item:

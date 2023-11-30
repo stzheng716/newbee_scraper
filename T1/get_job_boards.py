@@ -16,6 +16,7 @@ options = webdriver.ChromeOptions()
 options.add_argument("--headless=new")
 driver = webdriver.Chrome(options=options)
 
+
 def getURL():
     processed_urls = set()
     '''Tier 1: The First Scrape
@@ -25,7 +26,7 @@ def getURL():
     - N/A
 
     Returns:
-    - Inserts each URL into a local SQLite DB for bulk insert later on. 
+    - Inserts each URL into a local SQLite DB for bulk insert later on.
         This saves database queries and is more efficient (and it saves us a little money)
     '''
     driver.set_window_size(1024, 1024)
