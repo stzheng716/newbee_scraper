@@ -2,13 +2,9 @@ import json
 import requests
 from bs4 import BeautifulSoup
 import re
-<<<<<<< HEAD
 from utilities.db_utils import KEYWORDS
 from data.headers import headers
-=======
-from utilities.utils import KEYWORDS
-from database_utils.headers import headers
->>>>>>> edea51dd59573c1537d4adc50d6153bea2180624
+
 """
 Scraper for jobs on boards.greenhouse.io
 
