@@ -4,7 +4,8 @@ import json
 import openai
 from dotenv import dotenv_values
 from utilities.db_bulk_data_utils import bulk_insert_GPT_response
-from utilities.utils import query_unblessed_US_jobs
+from utilities.db_utils import query_unblessed_US_jobs
+
 
 config = dotenv_values(".env")
 openai.api_key = config["OPEN_AI_API_KEY"]
@@ -29,12 +30,12 @@ def request_GPT(jobs):
 
     That said - there's some string-fu happening to clean the GPT responses up before converting them to Python dicts.
     """
-    initial_prompt = """You are a job filter bot that evaluates job descriptions. 
-    Step 1) Assess if the job would be appropriate for a full stack developer with 0-3 years of experience, inclusive. Your response should follow these guidelines: return {\"apply\": \"True\"} if the job requires 3 years of experience or less, and there is no explicit degree requirement. If it requires the applicant is currently pursuing a degree the application is disqualified. Do not make any assumptions about degree requirements if they are not mentioned in the job description. Issue {\"apply\": \"False\"} if the job requires more than 3 years of experience or explicitly states that a Bachelors, Masters, or PhD degree is necessary. 
+    initial_prompt = """You are a job filter bot that evaluates job descriptions.
+    Step 1) Assess if the job would be appropriate for a full stack developer with 0-3 years of experience, inclusive. Your response should follow these guidelines: return {\"apply\": \"True\"} if the job requires 3 years of experience or less, and there is no explicit degree requirement. If it requires the applicant is currently pursuing a degree the application is disqualified. Do not make any assumptions about degree requirements if they are not mentioned in the job description. Issue {\"apply\": \"False\"} if the job requires more than 3 years of experience or explicitly states that a Bachelors, Masters, or PhD degree is necessary.
     Step 2) List all mentioned technologies in the job description within the \"tech_stack\" array without distinguishing between different versions of the technologies. If there is no tech_stack, return ['no technologies mentioned']
-    Step 3) Provide the salary information. Seek out variable "date_variable" as month, year, week, or hour depending on the provided data. Return as {\"salary\": \"See application for details.\"} if it is not stated, or return the partial or full salary range as specified in the job description as a string: \"salary\": \"$int - $int /\"date_variable\"\".  
+    Step 3) Provide the salary information. Seek out variable "date_variable" as month, year, week, or hour depending on the provided data. Return as {\"salary\": \"See application for details.\"} if it is not stated, or return the partial or full salary range as specified in the job description as a string: \"salary\": \"$int - $int /\"date_variable\"\".
     Step 4) Return an <80 word summary of the job description.
-    Step 5) Return a \"reasoning\" of why the job is applicable or not. 
+    Step 5) Return a \"reasoning\" of why the job is applicable or not.
     Step 6) Return as JSON}"""
     count = 0
     work_slice = jobs[count : count + 20]
@@ -92,6 +93,9 @@ def request_GPT(jobs):
 
     ask_the_robot(work_slice, count, errors)
 
+
+# jobs = select_all_unblessed_US_roles_entry()
+jobs = get_weird_jobs
 
 jobs = query_unblessed_US_jobs()
 

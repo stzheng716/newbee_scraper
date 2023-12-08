@@ -2,8 +2,8 @@ import json
 import requests
 from bs4 import BeautifulSoup
 import re
-from utilities.utils import KEYWORDS
-from database_utils.headers import headers
+from utilities.db_utils import KEYWORDS
+from data.headers import headers
 
 """
 Scraper for jobs on boards.greenhouse.io
@@ -21,6 +21,7 @@ BS4 will do the main scrape and we can put all of the divs containing the pertin
 All jobs on jobs.greenhouse.io are in a div w/ class="posting"
 
 Roadblocks:
+    # noqa
     - job and department titles are inconsistent. We run the risk of missing jobs outside of our keywords ie: "site reliability"
     -
 """

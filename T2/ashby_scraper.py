@@ -2,7 +2,7 @@ import json
 import random
 from bs4 import BeautifulSoup
 import re
-from utilities.utils import KEYWORDS
+from utilities.db_utils import KEYWORDS
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
