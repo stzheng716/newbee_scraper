@@ -89,7 +89,7 @@ def scrape_job_description(url):
             job_description = '\n'.join(texts).replace('\n', "")
 
         # print(job_description)
-        breakpoint()
+        # breakpoint()
         return job_description
     except Exception as e:
         print("t3: Error processing HTML content: ", e)

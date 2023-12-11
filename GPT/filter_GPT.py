@@ -48,8 +48,8 @@ def request_GPT(jobs):
                         {"role": "user", "content": job[6]}]
             try:
                 res = openai.ChatCompletion.create(
-                    model="ft:gpt-3.5-turbo-1106:personal::8M0ktJe9",
-                    # model="gpt-3.5-turbo-1106",
+                    # model="ft:gpt-3.5-turbo-1106:personal::8M0ktJe9",
+                    model="gpt-3.5-turbo-1106",
                     response_format={ "type": "json_object" },
                     messages=messages,
                     temperature=0.5,
@@ -82,9 +82,8 @@ def request_GPT(jobs):
     ask_the_robot(work_slice, count, errors)
 
 # jobs = select_all_unblessed_US_roles_entry()
-jobs = get_weird_jobs
 
-jobs = query_unblessed_US_jobs()
+# jobs = query_unblessed_US_jobs()
 
 # request_GPT(jobs)
 
