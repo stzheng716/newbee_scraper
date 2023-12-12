@@ -109,7 +109,7 @@ print("Num examples missing user message:", n_missing_user)
 print_distribution(n_messages, "num_messages_per_example")
 print_distribution(convo_lens, "num_total_tokens_per_example")
 print_distribution(assistant_message_lens, "num_assistant_tokens_per_example")
-n_too_long = sum(l > 4096 for l in convo_lens)
+n_too_long = sum(l > 4096 for l in convo_lens)  # noqa
 print(f"\n{n_too_long} examples may be over the 4096 token limit, they will be truncated during fine-tuning")
 
 # Pricing and default n_epochs estimate
