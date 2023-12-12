@@ -3,10 +3,11 @@ from t2.ashby_scraper import scrape_ashby_job_board
 from t2.greenhouse_scraper import scrape_greenhouse_job_board
 from t2.lever_scraper import scrape_lever_job_board
 
-""" Passing the variable "test" isn't necessary when calling these functions, but 
+""" Passing the variable "test" isn't necessary when calling these functions, but
 running it with test=True prints the jobs to the terminal instead of adding it
-to the DataBase. 
+to the DataBase.
 """
+
 
 def test_ashby():
     ats_dict = query_job_board_ats()
@@ -16,6 +17,7 @@ def test_ashby():
         scrape_ashby_job_board(url.careers_url, url.company_name, test=True)
         breakpoint()
 
+
 def test_greenhouse():
     ats_dict = query_job_board_ats()
     for url in ats_dict["greenhouse"]:
@@ -24,6 +26,7 @@ def test_greenhouse():
         print("CoName---->", url.company_name)
         breakpoint()
 
+
 def test_lever():
     ats_dict = query_job_board_ats()
     for url in ats_dict["lever"]:
@@ -31,6 +34,7 @@ def test_lever():
         print("CoName---->", url.company_name)
         scrape_lever_job_board(url.careers_url, url.company_name, test=True)
         breakpoint()
+
 
 def test_all_boards():
     ats_dict = query_job_board_ats()
@@ -49,4 +53,3 @@ def test_all_boards():
                 print("CoName---->", url.company_name)
                 scrape_greenhouse_job_board(url.careers_url, url.company_name, test=True)
             breakpoint()
-

@@ -1,14 +1,18 @@
 import json
+
 # import webbrowser
 import openai
 from dotenv import dotenv_values
 from utilities.db_bulk_data_utils import bulk_insert_GPT_response
-from utilities.db_utils import query_unblessed_US_jobs
+
+# NOTE:commented out linter error
+# from utilities.db_utils import query_unblessed_US_jobs
 
 
 config = dotenv_values(".env")
 openai.api_key = config["OPEN_AI_API_KEY"]
 # error log:
+
 
 def handle_error(job, e, errors):
     error_type = type(e).__name__
@@ -16,7 +20,9 @@ def handle_error(job, e, errors):
     error_info = {"job_URL": job[2], "error": f"{error_type}: {e}"}
     errors.append(error_info)
 
+
 def request_GPT(jobs):
+    # flake8: noqa: E501
     """
     input: [{},{}]
     output:[{entry_level: True, job_id: job_id}]
@@ -43,14 +49,15 @@ def request_GPT(jobs):
         print("length slice =", len(jobs_slice))
         display_count = 0
         for job in jobs_slice:
-
-            messages = [{"role":  "system", "content": initial_prompt},
-                        {"role": "user", "content": job[6]}]
+            messages = [
+                {"role": "system", "content": initial_prompt},
+                {"role": "user", "content": job[6]},
+            ]
             try:
                 res = openai.ChatCompletion.create(
                     # model="ft:gpt-3.5-turbo-1106:personal::8M0ktJe9",
                     model="gpt-3.5-turbo-1106",
-                    response_format={ "type": "json_object" },
+                    response_format={"type": "json_object"},
                     messages=messages,
                     temperature=0.5,
                     max_tokens=1000,
@@ -58,13 +65,20 @@ def request_GPT(jobs):
 
                 resp_raw = res.choices[0].message.content
 
-                #GPT's responses can be inconsistent. This guards against that
-                resp_cleaned = resp_raw.replace("\n", "").replace("'''", "").replace("```", "").replace("json", "").replace("JSON", "").replace("  ", "")
+                # GPT's responses can be inconsistent. This guards against that
+                resp_cleaned = (
+                    resp_raw.replace("\n", "")
+                    .replace("'''", "")
+                    .replace("```", "")
+                    .replace("json", "")
+                    .replace("JSON", "")
+                    .replace("  ", "")
+                )
 
                 resp = json.loads(resp_cleaned)
                 GPT_blessings.append((json.dumps(resp), job[3]))
                 display_count += 1
-                print (display_count)
+                print(display_count)
                 if len(GPT_blessings) >= 20:
                     break
 
@@ -79,11 +93,12 @@ def request_GPT(jobs):
 
         if count < len(jobs):
             ask_the_robot(work_slice, count, errors)
+
     ask_the_robot(work_slice, count, errors)
+
 
 # jobs = select_all_unblessed_US_roles_entry()
 
 # jobs = query_unblessed_US_jobs()
 
 # request_GPT(jobs)
-
