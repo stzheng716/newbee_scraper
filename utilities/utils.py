@@ -1,11 +1,9 @@
-from app import cursor
 from collections import Counter
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 import json
 
 """ Utility functions"""
-
 
 
 def extract_number(html_content: str) -> int:
@@ -20,8 +18,7 @@ def extract_number(html_content: str) -> int:
     - An integer representing the extracted number (e.g., 1349).
     """
     soup = BeautifulSoup(html_content, "html.parser")
-    div_element = soup.find(
-        "div", class_="selectionCount summaryCell flex-auto")
+    div_element = soup.find("div", class_="selectionCount summaryCell flex-auto")
 
     if div_element:  # Check if the div_element was found
         text_content = div_element.text
@@ -89,8 +86,7 @@ def extract_and_save(response, url_set):
                     else "".join(char if char != "," else " " for char in company_name)
                 )
                 jobs_link_guard = row.find(attrs={"data-columnindex": "2"})
-                jobs_link = row.find(
-                attrs={"data-columnindex": "2"}).a.get("href") if jobs_link_guard else ""
+                jobs_link = row.find(attrs={"data-columnindex": "2"}).a.get("href") if jobs_link_guard else ""
             except AttributeError as e:
                 print(e, company_name)
                 pass
@@ -100,18 +96,20 @@ def extract_and_save(response, url_set):
             url_set.add(company_info)
         return url_set
 
+
 def flatten_tuple_list(jobs):
-    '''flattens complex lists of nested tuples
+    """flattens complex lists of nested tuples
     used in bulk insert functions
-    '''
+    """
     flat_jobs = [job for sublist in jobs for job in sublist]
     return flat_jobs
 
+
 def identify_inactive_jobs(scraped_jobs, db_job_id):
-    '''compare two list and returns list that appears on second
+    """compare two list and returns list that appears on second
     list and not on first list
     scraped job_id = scraped_jobs[2]
-    '''
+    """
 
     scraped_jobs_id = [job[2] for job in scraped_jobs]
     delete_set = set(db_job_id) - set(scraped_jobs_id)
@@ -122,8 +120,8 @@ def identify_inactive_jobs(scraped_jobs, db_job_id):
 
 
 def freq_count(data):
-    '''written to return frequency each technology is mentioned in tech_stack
-    of json_response'''
+    """written to return frequency each technology is mentioned in tech_stack
+    of json_response"""
 
     tech_requirements = []
     for item in data:
@@ -134,11 +132,9 @@ def freq_count(data):
     frequency_counter = Counter(tech_requirements)
 
     # Sort by frequency in descending order
-    sorted_domains = sorted(frequency_counter.items(),
-                            key=lambda x: x[1], reverse=True)
+    sorted_domains = sorted(frequency_counter.items(), key=lambda x: x[1], reverse=True)
 
     # Print the sorted frequencies
     for tech, count in sorted_domains:
         if count >= 10:
             print(f"{tech}: {count}")
-

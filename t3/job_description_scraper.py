@@ -28,8 +28,7 @@ def scrape_with_selenium(url):
     try:
         driver.get(url)
         element = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located(
-                (By.CLASS_NAME, "_description_z1j6s_201"))
+            EC.presence_of_element_located((By.CLASS_NAME, "_description_z1j6s_201"))
         )
         return element.text
     except Exception as e:
@@ -59,34 +58,32 @@ def scrape_job_description(url):
     response = None
     try:
         response = requests.get(url)
-        soup = BeautifulSoup(response.content, 'html.parser')
+        soup = BeautifulSoup(response.content, "html.parser")
         job_description = ""
 
         if "greenhouse" in url:
-            content_divs = soup.find_all('div', id='content')
+            content_divs = soup.find_all("div", id="content")
             if content_divs:  # Check if the list is not empty
-                job_description = content_divs[0].text.replace(
-                    "\n", " ").strip()
+                job_description = content_divs[0].text.replace("\n", " ").strip()
             else:
                 print("T3 >>> No div with id='content' found.")
         # elif "ashby" in url:
         #     job_description = soup.find('meta', attrs={'name': 'description'}).get(
         #         'content').replace("\n", "").strip()
         elif "ashby" in url:
-            job_desc_div = soup.find('div', class_="_description_z1j6s_201")
+            job_desc_div = soup.find("div", class_="_description_z1j6s_201")
             if job_desc_div:
-                job_description = ' '.join(job_desc_div.stripped_strings)
+                job_description = " ".join(job_desc_div.stripped_strings)
             else:
-                print(
-                    "BeautifulSoup failed to find the Ashby job description, attempting Selenium...")
+                print("BeautifulSoup failed to find the Ashby job description, attempting Selenium...")
                 job_description = scrape_with_selenium(url)
                 if not job_description:
                     print(f"Failed to scrape job description for {url}")
 
         elif "lever" in url:
-            job_line = soup.find_all('div', class_="section page-centered")
+            job_line = soup.find_all("div", class_="section page-centered")
             texts = [div.text for div in job_line]
-            job_description = '\n'.join(texts).replace('\n', "")
+            job_description = "\n".join(texts).replace("\n", "")
 
         # print(job_description)
         # breakpoint()
@@ -97,7 +94,7 @@ def scrape_job_description(url):
 
 
 def aggregate_job_descriptions():
-    '''
+    """
     Aggregate job descriptions from a list of job postings.
 
     This function iterates over job postings obtained from the database, scrapes each job
@@ -108,7 +105,7 @@ def aggregate_job_descriptions():
 
     ex: job_descriptions =
         [( 'job description string', 'job_id'), ()...]
-    '''
+    """
     job_descriptions = []
     for job in query_all_job_posting():
         jd_text = scrape_job_description(job[0])
@@ -128,5 +125,6 @@ def scrape_n_save():
     """
     jobs = aggregate_job_descriptions()
     bulk_insert_jds(jobs)
+
 
 # scrape_n_save()

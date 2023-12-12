@@ -5,6 +5,7 @@ from t2.ashby_scraper import scrape_ashby_job_board
 from t2.greenhouse_scraper import scrape_greenhouse_job_board
 from t2.lever_scraper import scrape_lever_job_board
 
+
 def scrape_all_boards():
     potential_jobs = []
     jobs = query_job_board_ats()
@@ -25,7 +26,7 @@ def scrape_all_boards():
                 print("t2 scrape jobs count ashby", len(potential_jobs))
             else:
                 pass
-            
+
         elif job[3] == "boards.greenhouse.io":
             # print("CoName>>", job[1], "URL>>>", job[2] )
             greenhouse_jobs = scrape_greenhouse_job_board(job[2], job[1])
@@ -34,7 +35,7 @@ def scrape_all_boards():
                 print("t2 scrape jobs count greenhouse", len(potential_jobs))
             else:
                 pass
-                
+
     print("potential_jobs ", potential_jobs)
     print("TOTAL t2 scrape jobs count", len(potential_jobs))
 
@@ -45,13 +46,13 @@ def scrape_all_boards():
     db_job_ids = query_all_job_ids()
     flat_all_jobs_id = flatten_tuple_list(db_job_ids)
 
-    #returns a list of jobs that is in database but not in recently scraped jobs
+    # returns a list of jobs that is in database but not in recently scraped jobs
     inactive_jobs = identify_inactive_jobs(flat_jobs, flat_all_jobs_id)
-    
-    #bulk removes a list of jobs from the data
+
+    # bulk removes a list of jobs from the data
     remove_jobs_by_ids(inactive_jobs)
 
     bulk_insert_job_postings(flat_jobs)
 
+
 # scrape_all_boards()
-            
