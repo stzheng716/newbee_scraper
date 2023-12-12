@@ -1,4 +1,3 @@
-from app import cursor
 from collections import Counter
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
