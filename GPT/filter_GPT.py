@@ -4,7 +4,9 @@ import json
 import openai
 from dotenv import dotenv_values
 from utilities.db_bulk_data_utils import bulk_insert_GPT_response
-from utilities.db_utils import query_unblessed_US_jobs
+
+# NOTE:commented out linter error
+# from utilities.db_utils import query_unblessed_US_jobs
 
 
 config = dotenv_values(".env")
@@ -20,6 +22,7 @@ def handle_error(job, e, errors):
 
 
 def request_GPT(jobs):
+    # flake8: noqa: E501
     """
     input: [{},{}]
     output:[{entry_level: True, job_id: job_id}]
