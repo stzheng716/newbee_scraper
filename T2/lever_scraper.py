@@ -73,4 +73,6 @@ def scrape_lever_job_board(url, company_name, test=False):
         pass
 
 
-print("job and department titles are inconsistent. We run the risk of missing jobs outside of our keywords ie: site reliability")
+print(
+    "job and department titles are inconsistent. We run the risk of missing jobs outside of our keywords ie: site reliability"
+)

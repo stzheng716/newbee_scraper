@@ -46,7 +46,7 @@ def bulk_insert_jds(job_desc):
         UPDATE job_postings
         SET job_description = %s
         WHERE job_id = %s;
-        """
+        """  # noqa
     try:
         conn.commit()
         cursor.executemany(update_query, (job_desc))
@@ -71,7 +71,7 @@ def bulk_insert_GPT_response(GPT_resp):
     insert_query = """
         UPDATE job_postings
         SET json_response = (
-            json_response::jsonb || 
+            json_response::jsonb |
             %s::jsonb
         )::json
         WHERE job_id = %s;
