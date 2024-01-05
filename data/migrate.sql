@@ -45,7 +45,7 @@ CREATE TABLE public.job_postings (
     job_scraped_date timestamp without time zone DEFAULT now() NOT NULL,
     company_name character varying NOT NULL REFERENCES public.job_boards(company_name) ON DELETE CASCADE,
     job_description text,
-    json_response json,
+    json_response jsonb,
     UNIQUE (job_id)
 );
 

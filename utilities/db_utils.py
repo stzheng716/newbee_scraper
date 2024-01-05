@@ -74,7 +74,7 @@ def query_unblessed_US_jobs():
     """
 
     select_query = f"""
-    # noqa
+    
         SELECT *
         FROM job_postings
         WHERE
@@ -124,7 +124,6 @@ def query_blessed_jobs():
 
 def query_tech_stack():
     select_query = """SELECT (json_response ->> 'tech_stack')
-    # noqa
             FROM job_postings
             WHERE
             (json_response ->> 'location') LIKE ANY (ARRAY[
@@ -167,7 +166,6 @@ def query_weird_jobs():
     Really just saving these here so we have a reference for odd-ball queries
     """
     query_blessed_null_tech_stack = """SELECT *
-    # noqa
         FROM job_postings
         where json_response ->> 'apply' ILIKE 'true'
         and json_response ->> 'tech_stack' is null ;"""

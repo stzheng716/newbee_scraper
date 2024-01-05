@@ -14,6 +14,8 @@ def bulk_insert_job_boards(data):
             """
     try:
         cursor.executemany(insert_query, data)
+        conn.commit()
+        print("success! t1 insert")
     except psycopg2.DatabaseError as e:
         conn.rollback()
         print(f"Database error in t1 insert: {e}")
@@ -71,7 +73,7 @@ def bulk_insert_GPT_response(GPT_resp):
     insert_query = """
         UPDATE job_postings
         SET json_response = (
-            json_response::jsonb |
+            json_response::jsonb ||
             %s::jsonb
         )::json
         WHERE job_id = %s;

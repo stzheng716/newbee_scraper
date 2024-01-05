@@ -14,7 +14,6 @@ flake8==6.1.0
 Flask==3.0.0
 Flask-SQLAlchemy==3.1.1
 future==0.18.3
-GDAL==3.6.4
 gunicorn==21.2.0
 h11==0.14.0
 httpwatcher==0.5.2
