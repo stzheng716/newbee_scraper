@@ -36,7 +36,7 @@ def scrape_all_boards():
             else:
                 pass
 
-    print("potential_jobs ", potential_jobs)
+    # print("potential_jobs ", potential_jobs)
     print("TOTAL t2 scrape jobs count", len(potential_jobs))
 
     # combines all list to a single list of jobs scraped
