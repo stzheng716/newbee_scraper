@@ -104,7 +104,7 @@ def remove_jobs_by_ids(inactive_jobs):
     """takes in a list of job ids and then bulk removes jobs from the database
     from job_postings table
     """
-    print("INACTIVE JOB>>>", inactive_jobs)
+    # print("INACTIVE JOB>>>", inactive_jobs)
 
     delete_query = """
         DELETE FROM job_postings

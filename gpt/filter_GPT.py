@@ -14,7 +14,7 @@ client = OpenAI(api_key=config["OPENAI_API_KEY"])
 
 def handle_error(job, e, errors):
     error_type = type(e).__name__
-    print(f"Encountered {error_type}: {e}")
+    print(f"Encountered {error_type}: {e}", job[0], job[1], job[2])
     error_info = {"job_URL": job[2], "error": f"{error_type}: {e}"}
     errors.append(error_info)
 
