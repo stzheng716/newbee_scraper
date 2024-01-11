@@ -24,3 +24,10 @@ Then adjusted the pg_hba.conf to actually allow the connection from my home comp
 host	 all 	all 	my_ip/32 	md5
 
 To allow access for the front end, we’ll need to adjust the pg_hba.conf to allow access to the FE’s IP address.
+
+data_directory = '/var/lib/postgresql/15/main'          # use data in another directory
+                                        # (change requires restart)
+hba_file = '/etc/postgresql/15/main/pg_hba.conf'        # host-based authentication file
+                                        # (change requires restart)
+ident_file = '/etc/postgresql/15/main/pg_ident.conf'    # ident configuration file
+                                        # (change requires restart)
