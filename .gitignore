@@ -1,3 +1,4 @@
-/venv
-.env
+venv/
 __pycache__
+.gitignore
+google-chrome-stable_current_amd64.deb
