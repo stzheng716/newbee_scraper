@@ -54,7 +54,7 @@ def extract_ats_domain(url):
     if domain and domain.startswith("www."):
         domain = domain[4:]  # Remove "www."
 
-    return domain
+    return domain if domain else ""
 
 
 def extract_and_save(response, url_set):
@@ -78,24 +78,19 @@ def extract_and_save(response, url_set):
     if all_rows:
         for row in all_rows:
             try:
-                company_name = row.find(attrs={"data-columnindex": "0"}).get_text()
-                # this is n^2?
-                company_name_no_commas = (
-                    "requires research"
-                    if not company_name
-                    else "".join(char if char != "," else " " for char in company_name)
-                )
-                jobs_link_guard = row.find(attrs={"data-columnindex": "2"})
-                jobs_link = row.find(attrs={"data-columnindex": "2"}).a.get("href") if jobs_link_guard else ""
+                company_name_element = row.find(attrs={"data-columnindex": "0"})
+                company_name = company_name_element.get_text() if company_name_element else ""
+                jobs_link_element = row.find(attrs={"data-columnindex": "2"})
+                jobs_link = jobs_link_element.a.get("href") if jobs_link_element and jobs_link_element.a else ""
             except AttributeError as e:
                 print(e, company_name)
                 pass
+
             ats_url = extract_ats_domain(jobs_link)
-            company_info = (company_name_no_commas, jobs_link, ats_url)
-
+            company_info = (company_name, jobs_link, ats_url)
             url_set.add(company_info)
-        return url_set
 
+    return url_set
 
 def flatten_tuple_list(jobs):
     """flattens complex lists of nested tuples

@@ -6,15 +6,17 @@ from dotenv import dotenv_values
 from utilities.db_bulk_data_utils import bulk_insert_GPT_response
 
 # NOTE:commented out linter error
+# from utilities.db_utils import query_unblessed_US_jobs
 
-config = dotenv_values("/home/newbee/newbee_scraper/.env")
+
+config = dotenv_values(".env")
 client = OpenAI(api_key=config["OPENAI_API_KEY"])
 # error log:
 
 
 def handle_error(job, e, errors):
     error_type = type(e).__name__
-    print(f"Encountered {error_type}: {e}", job[0], job[1], job[2])
+    print(f"Encountered {error_type}: {e}")
     error_info = {"job_URL": job[2], "error": f"{error_type}: {e}"}
     errors.append(error_info)
 
@@ -41,7 +43,6 @@ def request_GPT(jobs):
     count = 0
     work_slice = jobs[count : count + 20]
     errors = []
-    print("jobs to be processed: ", len(jobs))
 
     def ask_the_robot(jobs_slice, count, errors):
         GPT_blessings = []
@@ -53,7 +54,8 @@ def request_GPT(jobs):
                 {"role": "user", "content": job[6]},
             ]
             try:
-                res = client.chat.completions.create(
+                res = client.chat.completion.create(
+                    # model="ft:gpt-3.5-turbo-1106:personal::8M0ktJe9",
                     model="gpt-3.5-turbo-1106",
                     response_format={"type": "json_object"},
                     messages=messages,
@@ -66,7 +68,7 @@ def request_GPT(jobs):
                 # GPT's responses can be inconsistent. This guards against that
                 resp_cleaned = (
                     resp_raw.replace("\n", "")
-                    .replace("\'\'\'", "")
+                    .replace("'''", "")
                     .replace("```", "")
                     .replace("json", "")
                     .replace("JSON", "")
@@ -89,7 +91,14 @@ def request_GPT(jobs):
         work_slice = jobs[count : count + 20]
         print("count =", count, "  len(jobs) =", len(jobs))
 
-        if count < len(jobs):
+        if count < 20:
             ask_the_robot(work_slice, count, errors)
 
     ask_the_robot(work_slice, count, errors)
+
+
+# jobs = select_all_unblessed_US_roles_entry()
+
+# jobs = query_unblessed_US_jobs()
+
+# request_GPT(jobs)

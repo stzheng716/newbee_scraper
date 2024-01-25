@@ -1,0 +1,33 @@
+crontab -e	opens the crontab to edit times and log locations.
+* * * * * >>> min | hour(24hr) | day/month | month | day/week (0=sunday)
+*s that aren’t set are read as ‘every’ by the cronjob. 
+
+These are the current crontab tasks:
+0 2 * * 0,3 /home/newbee/automate/weekly.sh >> /home/newbee/automate/weekly.log 2>&1
+0 3 * * * /home/newbee/automate/daily.sh >> /home/newbee/automate/daily.log 2>&1
+
+The cron jobs fire a bash script that enters the venv and fires the python script for daily or weekly scrapes.
+
+Log files are created in the “automation” directory, they’re all the terminal prints from the python scripts.
+
+
+Connecting the droplet DB to the frontend:
+
+.evn on frontend:
+DATABASE_URL=postgresql://newbee:your_actual_password@137.184.34.110/job_crawler
+
+File adjustments on backend:
+I changed the postgresql.conf file to listen for all IP address requests.
+listen_addresses '*' 
+
+Then adjusted the pg_hba.conf to actually allow the connection from my home computer’s IP. 
+host	 all 	all 	my_ip/32 	md5
+
+To allow access for the front end, we’ll need to adjust the pg_hba.conf to allow access to the FE’s IP address.
+
+data_directory = '/var/lib/postgresql/15/main'          # use data in another directory
+                                        # (change requires restart)
+hba_file = '/etc/postgresql/15/main/pg_hba.conf'        # host-based authentication file
+                                        # (change requires restart)
+ident_file = '/etc/postgresql/15/main/pg_ident.conf'    # ident configuration file
+                                        # (change requires restart)

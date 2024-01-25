@@ -1,0 +1,102 @@
+<selenium.webdriver.remote.webelement.WebElement (session="14152284d6c37f1d27e99f5e6f6edf4f", element="42477BDFDFBAE4E284B7607B7D8165C7_element_26")>
+t1 get job boards urls processed:  65
+t1 get job boards urls processed:  96
+t1 get job boards urls processed:  127
+t1 get job boards urls processed:  158
+t1 get job boards urls processed:  189
+t1 get job boards urls processed:  220
+t1 get job boards urls processed:  251
+t1 get job boards urls processed:  282
+t1 get job boards urls processed:  313
+t1 get job boards urls processed:  344
+t1 get job boards urls processed:  375
+t1 get job boards urls processed:  406
+t1 get job boards urls processed:  437
+t1 get job boards urls processed:  468
+t1 get job boards urls processed:  499
+t1 get job boards urls processed:  530
+t1 get job boards urls processed:  561
+t1 get job boards urls processed:  592
+t1 get job boards urls processed:  623
+t1 get job boards urls processed:  654
+t1 get job boards urls processed:  685
+t1 get job boards urls processed:  716
+t1 get job boards urls processed:  747
+t1 get job boards urls processed:  778
+t1 get job boards urls processed:  809
+t1 get job boards urls processed:  840
+t1 get job boards urls processed:  871
+t1 get job boards urls processed:  902
+t1 get job boards urls processed:  933
+t1 get job boards urls processed:  964
+t1 get job boards urls processed:  995
+t1 get job boards urls processed:  1026
+t1 get job boards urls processed:  1057
+t1 get job boards urls processed:  1088
+t1 get job boards urls processed:  1119
+t1 get job boards urls processed:  1150
+t1 get job boards urls processed:  1181
+t1 get job boards urls processed:  1212
+t1 get job boards urls processed:  1243
+t1 get job boards urls processed:  1274
+t1 get job boards urls processed:  1305
+t1 get job boards urls processed:  1336
+t1 get job boards urls processed:  1342
+t1 get job boards urls processed:  1342
+t1 get job boards urls processed:  1342
+success! t1 insert
+
+real	5m36.718s
+user	0m15.238s
+sys	0m2.358s
+<selenium.webdriver.remote.webelement.WebElement (session="bc7b308b2dd7440f14268a0dcf4c9481", element="992FB823AD18EF175CADCFFA0616E5CC_element_25")>
+t1 get job boards urls processed:  65
+t1 get job boards urls processed:  96
+t1 get job boards urls processed:  127
+t1 get job boards urls processed:  158
+t1 get job boards urls processed:  189
+t1 get job boards urls processed:  220
+t1 get job boards urls processed:  251
+t1 get job boards urls processed:  282
+t1 get job boards urls processed:  313
+t1 get job boards urls processed:  344
+t1 get job boards urls processed:  375
+t1 get job boards urls processed:  406
+t1 get job boards urls processed:  437
+t1 get job boards urls processed:  468
+t1 get job boards urls processed:  499
+t1 get job boards urls processed:  530
+t1 get job boards urls processed:  561
+t1 get job boards urls processed:  592
+t1 get job boards urls processed:  623
+t1 get job boards urls processed:  654
+t1 get job boards urls processed:  685
+t1 get job boards urls processed:  716
+t1 get job boards urls processed:  747
+t1 get job boards urls processed:  778
+t1 get job boards urls processed:  809
+t1 get job boards urls processed:  840
+t1 get job boards urls processed:  871
+t1 get job boards urls processed:  902
+t1 get job boards urls processed:  933
+t1 get job boards urls processed:  964
+t1 get job boards urls processed:  995
+t1 get job boards urls processed:  1026
+t1 get job boards urls processed:  1057
+t1 get job boards urls processed:  1088
+t1 get job boards urls processed:  1119
+t1 get job boards urls processed:  1150
+t1 get job boards urls processed:  1181
+t1 get job boards urls processed:  1212
+t1 get job boards urls processed:  1243
+t1 get job boards urls processed:  1275
+t1 get job boards urls processed:  1306
+t1 get job boards urls processed:  1337
+t1 get job boards urls processed:  1345
+t1 get job boards urls processed:  1345
+t1 get job boards urls processed:  1345
+success! t1 insert
+
+real	5m36.603s
+user	0m17.022s
+sys	0m3.074s

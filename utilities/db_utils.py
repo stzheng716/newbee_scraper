@@ -74,7 +74,7 @@ def query_unblessed_US_jobs():
     """
 
     select_query = f"""
-    # noqa
+    
         SELECT *
         FROM job_postings
         WHERE
@@ -101,8 +101,10 @@ def query_unblessed_US_jobs():
         ' Oregon', ' OR', ' Pennsylvania', ' PA', ' Rhode Island', ' RI', ' South Carolina', ' SC',
         ' South Dakota', ' SD', ' Tennessee', ' TN', ' Texas', ' TX', ' Utah', ' UT',
         ' Vermont', ' VT', ' Virginia', ' VA', ' Washington', ' WA', ' West Virginia', ' WV',
-        ' Wisconsin', ' WI', ' Wyoming', ' WY','% US %', '% US - %', ' US', 'US ', 'US -', '%United States%', '%US%', ' United States', 'United States ', 'US',
-        'Boston', 'San Francisco', 'Mountain View', 'Remote', 'Seattle', 'Portland', 'Denver'
+        ' Wisconsin', ' WI', ' Wyoming', ' WY','% US %', '% US - %', ' US', 'US ', 'US -', '%United States%', '%US%', ' United States', 
+        'United States ', 'US',
+        '%Boston%', '%San Francisco%', '%Mountain View%', 'Remote', '%Seattle%', '%Portland%', '%Denver%', '%New York%'
+        'Remote', '%Portland%'
         ])
         AND (json_response ->> 'location') NOT ILIKE '%India%' AND (json_response ->> 'location') NOT ILIKE '%latin%' AND (json_response ->> 'location') NOT ILIKE '%europe%' AND (json_response ->> 'location') NOT ILIKE '%UK%' AND (json_response ->> 'location') NOT ILIKE '%mexico%' AND (json_response ->> 'location') NOT ILIKE '%paris%'
         AND (job_title NOT ILIKE '%senior%' AND job_title NOT ILIKE '%staff%' AND job_title NOT ILIKE '%director%' AND job_title NOT ILIKE '%manager%' AND job_title NOT ILIKE '%sr.%' AND job_title NOT ILIKE '%data%' AND job_title NOT ILIKE '%head%' AND job_title NOT ILIKE '%sr %' AND job_title NOT ILIKE '%Mechanical%' AND job_title NOT ILIKE '%lead%' AND job_title NOT ILIKE '%net%' AND job_title NOT ILIKE '%Electrical%' AND job_title NOT ILIKE '%Principal%' AND job_title NOT ILIKE '%VP%' AND job_title NOT ILIKE '%Chassis%' AND job_title NOT ILIKE '%Legal%' AND job_title NOT ILIKE '%Avionics%' AND job_title NOT ILIKE '%President%')
@@ -124,7 +126,6 @@ def query_blessed_jobs():
 
 def query_tech_stack():
     select_query = """SELECT (json_response ->> 'tech_stack')
-    # noqa
             FROM job_postings
             WHERE
             (json_response ->> 'location') LIKE ANY (ARRAY[
@@ -167,7 +168,6 @@ def query_weird_jobs():
     Really just saving these here so we have a reference for odd-ball queries
     """
     query_blessed_null_tech_stack = """SELECT *
-    # noqa
         FROM job_postings
         where json_response ->> 'apply' ILIKE 'true'
         and json_response ->> 'tech_stack' is null ;"""
